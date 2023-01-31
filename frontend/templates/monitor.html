@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+		<title>Load Monitor</title>
+		<style>
+			table {
+				background-color: #FFFFFF;
+				padding: 1px;
+				font-family: Verdana, Arial;
+				color: #FFFFFF;
+				font-size: 0.9em;
+				border-spacing: 0px;
+			}
+			body {
+				background-color: #b7c9ff;
+			}
+			.mainTable {
+				border: solid 1px #000000;
+			}
+			a {
+				color: #86d6cf;
+			}
+			a:hover {
+				color: #ffc336;
+			}
+			#mainTitle {
+				background-image: linear-gradient(#4292ee, #314d77);
+			}
+			#db_message_toggler {
+				background-color: white;
+				border: solid 1px black;
+				display: inline-block;
+				padding: 7px;
+			}
+			#outputPanel {
+				background-color: black;
+				width: 700px;
+				height: 500px;
+				border: solid 1px #FFFFFF;
+				color: white;
+				font-family: 'Courier New', monospace;
+				padding: 4px;
+				overflow: scroll;
+				overflow-x: hidden;
+				overflow-wrap: break-word;
+				display: inline-block;
+			}
+			#outputPanel span {
+				display: block;
+			}
+			#tileCachePanel {
+				background-color: white;
+				border: solid 1px black;
+				display: inline-block;
+				padding: 7px;
+			}
+		</style>
+	</head>
+	<body>
+		<table style="width: 100%;" class="mainTable">
+			<tbody>
+				<tr style="background-color: #6961e2;">
+					<td style="padding: 4px;" id="mainTitle">
+						<span style="font-weight: bold;">Load Monitor</span>
+						<a style="float: right; margin-right: 10px;" href="/home/">Home Page</a>
+					</td>
+				</tr>
+				<tr style="height: 100%; color: #000000;">
+					<td style="vertical-align: top; padding-top: 1px;">
+						<div style="background-color: #e6f0ff; height: 100%; padding: 4px;">
+							<div id="outputPanel"></div>
+							<div id="tileCachePanel">
+								<b>Tile Cache</b><br>
+								<span>Worlds: {{tc_worlds}}</span><br>
+								<span>Total Tiles: {{tc_tiles}}</span>
+							</div>
+							<div id="db_message_toggler">
+								<button id="toggle">Blocking DB cycles</button>
+								<b id="db_message_display">(true)</b>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<script>
+			var outputPanel = document.getElementById("outputPanel");
+			var toggler = document.getElementById("toggle");
+			var disp = document.getElementById("db_message_display");
+			
+			toggler.onclick = () => {
+				blockDatabaseMessages = !blockDatabaseMessages;
+				disp.innerText = "("+blockDatabaseMessages+")";
+			}
+			function appendLine(string) {
+				var line = document.createElement("span");
+				string = string.replace(/\&/g, "&amp;").replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
+				string = string.replace(/(?:^[0-9]{1,3}(?:\.[0-9]{1,3}){3})|(?:^[0-9a-f]{4}(?::[0-9a-f]{4}){7})/, "<a target='_blank' href='http://rwhois.he.net/whois.php?query=$&'>$&</a>")
+				line.innerHTML = string;
+				var scrollBottom = false;
+				if((outputPanel.scrollHeight - outputPanel.clientHeight) - outputPanel.scrollTop < 20) {
+					scrollBottom = true;
+				}
+				outputPanel.appendChild(line);
+				if(scrollBottom) {
+					outputPanel.scrollTop = outputPanel.scrollHeight;
+				}
+			}
+
+			var socket;
+			var blockDatabaseMessages = true;
+			function makeSocket() {
+				socket = new WebSocket("ws" + (window.location.protocol === "https:" ? "s" : "") + "://" + window.location.host + "/administrator/monitor/ws/");
+				socket.onopen = function() {
+					appendLine("[Monitor] Opened");
+				}
+				socket.onclose = function() {
+					appendLine("[Monitor] Closed. Reconnecting...");
+					makeSocket();
+				}
+				socket.onmessage = function(msg) {
+    				var data = msg.data;
+    				if(data.startsWith("[Database]") && blockDatabaseMessages) return;
+    				appendLine(data);
+				};
+			}
+			makeSocket();
+		</script>
+	</body>
+</html>

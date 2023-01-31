@@ -1,0 +1,500 @@
+{% extends "base.html" %}
+
+{% block title %}
+	Options for "{{ world }}" | Our World of Text
+{% endblock %}
+
+{% block endhead %}
+<link rel="stylesheet" type="text/css" href="/static/css/autocomplete.css">
+<script>
+	var actionMethod = "";
+	onload = function() {
+		unclaim.onclick = function() { actionMethod = "unclaim" };
+		clear_public.onclick = function() { actionMethod = "clear_public" };
+		clear_all.onclick = function() { actionMethod = "clear_all" };
+		clear_chat_hist.onclick = function() { actionMethod = "clear_chat_hist" };
+	}
+	function action_confirm() {
+		var msg = "";
+		if(actionMethod == "unclaim") {
+			msg = "Are you sure you want to unclaim this world? This action cannot be undone if someone else reclaims the world."
+		}
+		if(actionMethod == "clear_public") {
+			msg = "Are you sure you want to clear all public areas? This action cannot be undone."
+		}
+		if(actionMethod == "clear_all") {
+			msg = "Are you sure you want to clear this world entirely? This action cannot be undone."
+		}
+		if(actionMethod == "clear_chat_hist") {
+			msg = "Are you sure you want to clear the chat history? This action cannot be undone."
+		}
+		return confirm(msg);
+	}
+	var advancedMiscVisible = false;
+	function showAdvancedMisc() {
+		var advElm = document.getElementById("advanced");
+		if(!advancedMiscVisible) {
+			advElm.style.display = "";
+			advancedMiscVisible = true;
+		} else {
+			advElm.style.display = "none";
+			advancedMiscVisible = false;
+		}
+	}
+</script>
+{% endblock %}
+
+{% block header %}
+	<h1>Options for "<a href="/{{ world }}">{{ world }}</a>"</h1>
+	<span><a href="/accounts/profile/">« Back to profile</a></span>
+{% endblock %}
+
+{% block content %}
+	{% if user.superuser %}
+		<div class="content_set">
+			<div class="content_set_title">This world is owned by:</div>
+			<div class="content_set_content" id="owned_by">
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				{% if owner_name %}
+					<a href="/administrator/users/by_username/{{owner_name}}" style="background-color: aqua; min-width: 70px;">
+						{{ owner_name }}
+					</a>
+				{% else %}
+					<b>[ No Owner ]</b>
+				{% endif %}
+			</div>
+		</div>
+	{% endif %}
+
+	<div class="content_set">
+		<div class="content_set_title">Access</div>
+		<div class="content_set_content" id="world_access">
+			<p class="set_description">
+				Who can visit and write on this world, by default.
+				You can designate members below.
+				Write-permissions can be overridden for particular sections of your world: visit your world, then click the "More" menu for options.
+			</p>
+			<form method="POST" action="">
+				<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrftoken }}" />
+				<p>
+					Who can visit this world?
+					<select name="readability">
+						<option value="0"{%if readability == 0%} selected{%endif%}>anyone</option>
+						<option value="1"{%if readability == 1%} selected{%endif%}>me and members</option>
+						<option value="2"{%if readability == 2%} selected{%endif%}>only me</option>
+					</select>
+				</p>
+				<p>
+					Who can write on it?
+					<select name="writability">
+						<option value="0"{%if writability == 0%} selected{%endif%}>anyone</option>
+						<option value="1"{%if writability == 1%} selected{%endif%}>me and members</option>
+						<option value="2"{%if writability == 2%} selected{%endif%}>only me</option>
+					</select>
+				</p>
+				<input type="hidden" name="form" value="access_perm">
+				<input type="submit" value="Submit">
+			</form>
+		</div>
+	</div>
+
+	<div class="content_set">
+		<div class="content_set_title">Features</div>
+		<div class="content_set_content" id="world_features">
+			<p class="set_description">
+				Who can use what features on this world.
+			</p>
+			<form method="POST" action="">
+				<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrftoken }}" />
+				<table class="config_table">
+					<tr>
+						<td class="feature_name">Go to coordinates</td>
+						<td>
+							<select name="go_to_coord">
+								<option value="0"{%if go_to_coord==0%} selected{%endif%}>anyone</option>
+								<option value="1"{%if go_to_coord==1%} selected{%endif%}>me and members</option>
+								<option value="2"{%if go_to_coord==2%} selected{%endif%}>only me</option>
+							</select>
+						</td>
+						<td class="feature_description">
+							Transports you to any given coordinates on a world.
+						</td>
+					</tr>
+					<tr>
+						<td class="feature_name">Create link to coordinates</td>
+						<td>
+							<select name="coord_link">
+								<option value="0"{%if coord_link==0%} selected{%endif%}>anyone</option>
+								<option value="1"{%if coord_link==1%} selected{%endif%}>me and members</option>
+								<option value="2"{%if coord_link==2%} selected{%endif%}>only me</option>
+							</select>
+						</td>
+						<td class="feature_description">
+							Make a letter be a link to a different part of the world.
+						</td>
+					</tr>
+					<tr>
+						<td class="feature_name">Create link to URL</td>
+						<td>
+							<select name="url_link">
+								<option value="0"{%if url_link==0%} selected{%endif%}>anyone</option>
+								<option value="1"{%if url_link==1%} selected{%endif%}>me and members</option>
+								<option value="2"{%if url_link==2%} selected{%endif%}>only me</option>
+							</select>
+						</td>
+						<td class="feature_description">
+							Make a letter be a link to a URL.
+						</td>
+					</tr>
+					<tr>
+						<td class="feature_name">Paste text</td>
+						<td>
+							<select name="paste">
+								<option value="0"{%if paste==0%} selected{%endif%}>anyone</option>
+								<option value="1"{%if paste==1%} selected{%endif%}>me and members</option>
+								<option value="2"{%if paste==2%} selected{%endif%}>only me</option>
+							</select>
+						</td>
+						<td class="feature_description">
+							Paste a lot of text at once.
+						</td>
+					</tr>
+					<tr>
+						<td class="feature_name">Create members-only areas</td>
+						<td>
+							<select name="membertiles_addremove">
+								<option value="true"{%if membertiles_addremove==1%} selected{%endif%}>me and members</option>
+								<option value="false"{%if membertiles_addremove==0%} selected{%endif%}>only me</option>
+							</select>
+						</td>
+						<td class="feature_description">
+							Allows members to create and remove members-only protected areas.
+						</td>
+					</tr>
+					<tr>
+						<td class="feature_name">Chat</td>
+						<td>
+							<select name="chat">
+								<option value="0"{%if chat_permission==0%} selected{%endif%}>anyone</option>
+								<option value="1"{%if chat_permission==1%} selected{%endif%}>me and members</option>
+								<option value="2"{%if chat_permission==2%} selected{%endif%}>only me</option>
+								<option value="-1"{%if chat_permission==-1%} selected{%endif%}>disabled</option>
+							</select>
+						</td>
+						<td class="feature_description">
+							Allows users to chat using the chatbox. This is not affected by read permissions or write permissions.
+						</td>
+					</tr>
+					<tr>
+						<td class="feature_name">Change text color</td>
+						<td>
+							<select name="color_text">
+								<option value="0"{%if color_text==0%} selected{%endif%}>anyone</option>
+								<option value="1"{%if color_text==1%} selected{%endif%}>me and members</option>
+								<option value="2"{%if color_text==2%} selected{%endif%}>only me</option>
+							</select>
+						</td>
+						<td class="feature_description">
+							Change the color of your text.
+						</td>
+					</tr>
+					<tr>
+						<td class="feature_name">Show cursor to everyone</td>
+						<td>
+							<select name="show_cursor">
+								<option value="0"{%if show_cursor==0%} selected{%endif%}>anyone</option>
+								<option value="1"{%if show_cursor==1%} selected{%endif%}>me and members</option>
+								<option value="2"{%if show_cursor==2%} selected{%endif%}>only me</option>
+								<option value="-1"{%if show_cursor==-1%} selected{%endif%}>disabled</option>
+							</select>
+						</td>
+						<td class="feature_description">
+							Make your cursor visible to others.
+						</td>
+					</tr>
+				</table>
+				<input type="hidden" name="form" value="features">
+				<input type="submit" value="Submit">
+			</form>
+		</div>
+	</div>
+
+	<div class="content_set">
+		<div class="content_set_title">Style</div>
+		<div class="content_set_content" id="world_style">
+			<p class="set_description">
+				Custom colors for your world.
+			</p>
+			<form method="POST" action="">
+				<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrftoken }}" />
+				<table class="config_table">
+					<tr>
+						<td class="feature_name">Text color</td>
+						<td>
+							<input name="color" value="{{ color }}" maxlength="20">
+						</td>
+						<td class="feature_description">
+							Use any <a href="https://en.wikipedia.org/wiki/Web_colors">CSS color</a>, such as "#40E0D0".
+							This is the color to be used then the text is completely black (#000000).
+						</td>
+					</tr>
+					<tr>
+						<td class="feature_name">Text color (public areas)</td>
+						<td>
+							<input name="public_text_color" value="{{ public_text_color }}" maxlength="20">
+						</td>
+						<td class="feature_description">
+							Public area text color.
+						</td>
+					</tr>
+					<tr>
+						<td class="feature_name">Text color (member areas)</td>
+						<td>
+							<input name="member_text_color" value="{{ member_text_color }}" maxlength="20">
+						</td>
+						<td class="feature_description">
+							Member area text color.
+						</td>
+					</tr>
+					<tr>
+						<td class="feature_name">Text color (owner areas)</td>
+						<td>
+							<input name="owner_text_color" value="{{ owner_text_color }}" maxlength="20">
+						</td>
+						<td class="feature_description">
+							Owner area text color.
+						</td>
+					</tr>
+					<tr>
+						<td class="feature_name">Cursor color</td>
+						<td>
+							<input name="cursor_color" value="{{ cursor_color }}" maxlength="20">
+						</td>
+						<td class="feature_description">
+						</td>
+					</tr>
+					<tr>
+						<td class="feature_name">Guest cursor color</td>
+						<td>
+							<input name="cursor_guest_color" value="{{ cursor_guest_color }}" maxlength="20">
+						</td>
+						<td class="feature_description">
+						</td>
+					</tr>
+					<tr>
+						<td class="feature_name">Background color</td>
+						<td>
+							<input name="bg" value="{{ bg }}" maxlength="20">
+						</td>
+						<td class="feature_description">
+						</td>
+					</tr>
+					<tr>
+						<td class="feature_name">Owner area color</td>
+						<td>
+							<input name="owner_color" value="{{ owner_color }}" maxlength="20">
+						</td>
+						<td class="feature_description"></td>
+					</tr>
+					<tr>
+						<td class="feature_name">Member area color</td>
+						<td>
+							<input name="member_color" value="{{ member_color }}" maxlength="20">
+						</td>
+						<td class="feature_description"></td>
+					</tr>
+					<tr>
+						<td class="feature_name">Menu color</td>
+						<td>
+							<input name="menu_color" value="{{ menu_color }}" maxlength="20">
+						</td>
+						<td class="feature_description"></td>
+					</tr>
+				</table>
+				<input type="hidden" name="form" value="style">
+				<input type="submit" value="Submit">
+			</form>
+		</div>
+	</div>
+
+	<div class="content_set">
+		<div class="content_set_title">Download Your World</div>
+		<div class="content_set_content">
+			<span style="margin-left:1em"><a href="/accounts/download/{{ world }}/">Download</a></span>
+		</div>
+	</div>
+
+	<div class="content_set">
+		<div class="content_set_title">Miscellaneous</div>
+		<div class="content_set_content" id="misc">
+			{% if misc_message %}
+				<span style="font-size:80%"><i>{{ misc_message }}</i></span>
+			{% endif %}
+			<p class="set_description">
+				Other features that may not meet the categories.
+			</p>
+			<form method="POST" action="">
+				<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrftoken }}" />
+				<p>
+					Name of this world:
+					<input name="new_world_name" value="{{ world }}">
+				</p>
+				{% if user.superuser %}
+					<p>
+						Current Background:
+						<input name="world_background" value="{{ background_path }}">
+					</p>
+					<p>
+						Background offset X:
+						<input name="world_background_x" value="{{ background_x }}">
+						<br>
+						Background offset Y:
+						<input name="world_background_y" value="{{ background_y }}">
+					</p>
+					<p>
+						<span class="set_description">Use 0 to automatically find the width.</span>
+						<br>
+						Background Width:
+						<input name="world_background_w" value="{{ background_w }}">
+						<br>
+						Background Height:
+						<input name="world_background_h" value="{{ background_h }}">
+					</p>
+					<p>
+						Background repeat mode:
+						<select name="background_repeat_mode">
+							<option value="0"{%if background_rmod==0%} selected{%endif%}>Tiled</option>
+							<option value="1"{%if background_rmod==1%} selected{%endif%}>Center</option>
+							<option value="2"{%if background_rmod==2%} selected{%endif%}>Singular</option>
+						</select>
+					</p>
+					<p>
+						<span class="set_description">Use -1 for no transparency</span>
+						<br>
+						Background Alpha Multiplier:
+						<input name="background_alpha" value="{{ background_alpha }}">
+					</p>
+				{% endif %}
+				<a href="javascript: showAdvancedMisc();" style="display: block; margin-bottom: 7px;">Advanced...</a>
+				<div id="advanced" style="display: none;">
+					<div style="background-color: #EEEEEE;">
+						<b>Cell Dimensions</b>
+						<div>
+							Default (10x18)
+							<input type="radio" name="charsize" value="default"{%if !half_chars && !square_chars%} checked{%endif%}>
+						</div>
+						<div>
+							Square (18x18)
+							<input type="radio" name="charsize" value="square"{%if square_chars%} checked{%endif%}>
+						</div>
+						<div>
+							Half (10x20)
+							<input type="radio" name="charsize" value="half"{%if half_chars%} checked{%endif%}>
+						</div>
+						<div>
+							Mixed (18x20)
+							<input type="radio" name="charsize" value="mixed"{%if mixed_chars%} checked{%endif%}>
+						</div>
+					</div>
+					<div style="background-color: #EEEEEE;">
+						<div>
+							<b>Meta Description</b>
+							<br><textarea name="meta_desc" style="width: 400px; height: 32px;" maxlength="600">{{meta_desc}}</textarea>
+						</div>
+					</div>
+					<div>
+						<div>
+							<b>Options</b>
+							<br>
+							<div>
+								This page is NSFW
+								<input name="nsfw_page" type="checkbox"{%if page_is_nsfw%} checked{%endif%}>
+							</div>
+							<div>
+								Do not log edits
+								<input name="no_log_edits" type="checkbox"{%if no_log_edits%} checked{%endif%}>
+							</div>
+						</div>
+					</div>
+					<br>
+				</div>
+				<input type="hidden" name="form" value="misc">
+				<input type="submit" value="Submit">
+			</form>
+		</div>
+	</div>
+
+	<div class="content_set">
+		<div class="content_set_title">Members</div>
+		<div class="content_set_content">
+			{% if members %}
+				<ul>
+					<form method="POST" action="."><div style="display:none"><input type="hidden" name="csrfmiddlewaretoken" value="{{ csrftoken }}" /></div>
+					<input type="hidden" name="form" value="remove_member">
+					{% for member in members %}
+						<li>{{ member.member_name }} <input type="submit" name="remove_{{ member.member_name }}" value="Remove {{ member.member_name }}">
+					{% endfor %}
+					</form>
+				</ul>
+			{% else %}
+				<span style="margin-left:1em">None</span>
+			{% endif %}
+			{% if add_member_message %}<div><i>{{ add_member_message }}</i></div>{% endif %}
+			<div style="margin-top:.3em">
+				<form method="POST" action="."><div style="display:none"><input type="hidden" name="csrfmiddlewaretoken" value="{{ csrftoken }}" /></div>
+					<label for="choose_member">Add a member: </label>
+					<input id="choose_member" type="text" name="add_member" value="">
+					<input type="hidden" name="form" value="add_member">
+					<input type="submit" value="Submit">
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<form method="POST" action="." id="action_form" onsubmit="return action_confirm();">
+		<input type="hidden" name="form" value="action">
+		<table>
+			<tbody>
+				<tr>
+					<td>
+						<button name="unclaim" class="action_btn" id="unclaim">Unclaim this world</button>
+					</td>
+					<td class="action_desc">
+						Give up ownership of this world.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button name="clear_public" class="action_btn" id="clear_public">Clear all public areas</button>
+					</td>
+					<td class="action_desc">
+						Clear all areas that are public (areas anyone can edit, regardless of rank). Text in protected areas will remain.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button name="clear_all" class="action_btn" id="clear_all">Clear everything</button>
+					</td>
+					<td class="action_desc">
+						Clear the entire world. All text will be completely gone including protected areas.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button name="clear_chat_hist" class="action_btn" id="clear_chat_hist">Clear chat history</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+{% endblock %}
+{% block endbody %}
+<script type="text/javascript" src="/static/autocomplete.js"></script>
+<script type="text/javascript">
+	autocomplete({
+		element: document.getElementById("choose_member"),
+		url: "/accounts/member_autocomplete/",
+		delay: 50
+	});
+</script>
+{% endblock %}

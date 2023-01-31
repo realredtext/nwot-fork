@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>{{ page_title }}</title>
+		<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+		<link rel="shortcut icon" type="image/png" href="/static/favicon.png">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+		{% if meta_desc %}<meta name="description" content="{{meta_desc}}">{% else %}<meta name="description" content="An infinite grid of text editable by anyone. This is a recreation of YourWorldOfText from scratch.">{% endif %}
+		<meta property="og:image" content="/static/logo.png">
+		<link type="text/css" rel="stylesheet" href="/static/css/yourworld.css">
+		{% for script in user.scripts %}<script src="/script_manager/view/{{ script.name }}/"></script>{% endfor %}
+	</head>
+	<body>
+		<div id="main_view">
+			<canvas id="owot" class="screen_canvas" style="display: none;"></canvas>
+		</div>
+		<a href="javascript: void 0;" id="link_element" title="Link to url..." target="_blank" style="cursor: pointer;">
+			<div id="link_div"></div>
+		</a>
+		<div id="topbar" class="ui">
+			<div id="topbar_inner">
+				<div id="announce" class="ui-vis" style="display: none;">
+					<span id="announce_text"></span>
+					<span id="announce_close" class="announce_close">X</span>
+				</div>
+				<span id="menu" class="ui-vis tab menu" style="display: none;">
+					<img src="/static/pin.png" class="menuPin" style="display: none;">
+					<span class="menuText">Menu</span>
+					<span style="font-size:50%">▼</span>
+				</span>
+			</div>
+		</div>
+		<div id="nav" class="ui menu ui-vis" style="display: none;">
+			<ul></ul>
+		</div>
+		<div id="coords" class="ui ui-vis" style="display: none;">
+			X: <span id="coord_X"></span>
+			Y: <span id="coord_Y"></span>
+		</div>
+		<div id="simplemodal-overlay" class="simplemodal-overlay" style="opacity: 0.5; height: 100%; width: 100%; position: fixed; left: 0px; top: 0px; z-index: 1001; display: none;"></div>
+		<div id="coord_input_panel" class="simplemodal-container" style="position: fixed; z-index: 1002; display: none;">
+			<div tabindex="-1" class="simplemodal-wrap" style="height: 100%; outline: 0px; width: 100%;">
+				<div id="coordinate_input_modal" class="simplemodal-data">
+					<form method="get" action="#" id="coord_input_form">
+						<div id="coord_input_title" style="max-width:20em">Go to coordinates:</div>
+						<br>
+						<table>
+							<tbody>
+								<tr>
+									<td>X: </td>
+									<td><input id="coord_input_X" type="text" name="coord_input_X" value=""></td>
+								</tr>
+								<tr>
+									<td>Y: </td>
+									<td><input id="coord_input_Y" type="text" name="coord_input_Y" value=""></td>
+								</tr>
+							</tbody>
+						</table>
+						<div id="coord_input_submit">
+							<input type="submit" value="   Go   "> or <span id="coord_input_cancel" class="simplemodal-close simplemodal-closelink">cancel</span>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div id="area_panel" class="simplemodal-container" style="position: fixed; z-index: 1002; display: none;">
+			<a class="modalCloseImg simplemodal-close" title="Close"></a>
+			<div tabindex="-1" class="simplemodal-wrap" style="height: 100%; outline: 0px; width: 100%;">
+				<div id="area_modal" class="simplemodal-data">
+					<button id="area_copy" style="margin-bottom: 1px;">Copy to Clipboard</button>
+					<textarea id="area_results"></textarea>
+					<span id="area_cancel" class="simplemodal-close simplemodal-closelink">Close</span>
+					<div>
+						<span id="acb_color"><input type="checkbox" id="area_cbox_color"> Copy colors<br></span>
+						<span id="acb_link"><input type="checkbox" id="area_cbox_link"> Copy links<br></span>
+						<span id="acb_prot"><input type="checkbox" id="area_cbox_prot"> Copy protections<br></span>
+						<span id="acb_protpub" style="margin-left: 20px; display: none;"><input type="checkbox" id="area_cbox_protpub"> Copy public protections<br></span>
+						<span id="acb_tleft"><input type="checkbox" id="area_cbox_tleft"> Trim left<br></span>
+						<span id="acb_tright"><input type="checkbox" id="area_cbox_tright"> Trim right<br></span>
+						<span id="acb_tempty"><input type="checkbox" id="area_cbox_tempty"> Trim empty lines<br></span>
+						<span id="acb_rgap"><input type="checkbox" id="area_cbox_rgap"> Remove gaps<br></span>
+						<span id="acb_rlnbrk"><input type="checkbox" id="area_cbox_rlnbrk"> Remove line breaks<br></span>
+						<span id="acb_rsurrog"><input type="checkbox" id="area_cbox_rsurrog"> Remove surrogates<br></span>
+						<span id="acb_rcomb"><input type="checkbox" id="area_cbox_rcomb"> Remove combining chars<br></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="url_input_panel" class="simplemodal-container" style="position: fixed; z-index: 1002; display: none;">
+			<a class="modalCloseImg simplemodal-close" title="Close"></a>
+			<div tabindex="-1" class="simplemodal-wrap" style="height: 100%; outline: 0px; width: 100%;">
+				<div id="url_input_modal" class="simplemodal-data">
+					<form method="get" action="#" id="url_input_form">
+						<br>
+						<label for="url_input">URL: </label>
+						<input id="url_input_form_input" type="text" name="url_input" value="">
+						<div id="url_input_submit">
+							<input type="submit" value="   Go   "> or <span id="url_input_cancel" class="simplemodal-close simplemodal-closelink">cancel</span>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div id="color_input_panel" class="simplemodal-container" style="position: fixed; z-index: 1002; display: none;">
+			<a class="modalCloseImg simplemodal-close" title="Close"></a>
+			<div tabindex="-1" class="simplemodal-wrap" style="height: 100%; outline: 0px; width: 100%;">
+				<div id="color_input_modal" class="simplemodal-data">
+					<form method="get" action="#" id="color_input_form">
+						<br>
+						<label for="color_input">Color Code: </label>
+						<input class="jscolor" value="000000" id="color_input_form_input">
+						<div id="color_input_submit">
+							<input type="submit" value="   Go   "> or <span id="color_input_cancel" class="simplemodal-close simplemodal-closelink">cancel</span>
+						</div>
+						<br>
+					</form>
+				</div>
+			</div>
+			<div id="color_shortcuts"></div>
+		</div>
+
+		<h1 id="loading">Loading...</h1>
+		<div style="display:none"><input type="hidden" name="csrfmiddlewaretoken" value="{{ user.csrftoken }}" /></div>
+		<script>
+			var state = {{ state|safe }};
+		</script>
+
+		<textarea autocapitalize="off" autocorrect="off" autocomplete="off" style="left: -1000px; top: -1000px; position: absolute;" id="textInput"></textarea>
+
+		<div id="protect_precision" style="display: none;">
+			<div style="padding-bottom: 3px;">
+				Protect type:
+			</div>
+			<div class="protect_button" id="tile_choice" onclick="protectPrecisionOption(0);">
+				Tile
+			</div>
+			<div class="protect_button" id="char_choice" onclick="protectPrecisionOption(1);">
+				Char
+			</div>
+		</div>
+		<div id="auto_prog" class="auto_prog_panel" style="display: none"></div>
+
+		<div id="chat_open" style="display: none;">
+			<span>Chat&nbsp;<b id="total_unread" class="unread" style="display: none;">(-)</b></span>
+		</div>
+		<div id="chat_window" style="width: 400px; height: 300px; bottom: 0px; left: 0px; display: none;">
+			<div id="chat_upper" style="padding: 3px; padding-bottom: 0px;">
+				<div class="chat_tab_button" id="chat_page_tab" style="background-color: #8c8c8c; color: white;">
+					This page&nbsp;<b id="page_unread" class="unread" style="display: none;">(-)</b>
+				</div><div class="chat_tab_button" id="chat_global_tab">
+					Global&nbsp;<b id="global_unread" class="unread" style="display: none;">(-)</b>
+				</div>
+				<span id="usr_online"></span>
+				<div id="chat_close">X</div>
+			</div>
+			<div class="chatfield" id="page_chatfield"></div>
+			<div class="chatfield" id="global_chatfield" style="display: none;"></div>
+			<div id="chat_lower" style="width: 100%; display: flex;">
+				<input style="width: 100%; margin: 3px; margin-right: 0px;" id="chatbar">
+				<button id="chatsend" style="margin: 3px;">Send</button>
+			</div>
+		</div>
+		<div id="confirm_js" style="display: none; top: 50px; left: 100px;">
+			<a href="javascript:void 0;" id="run_js_confirm">run</a>
+			<span id="confirm_js_msg">
+				Are you sure you want to run this javascript link?
+				<br>
+				Press Close to <i>not</i> run it.
+			</span>
+			<span id="confirm_js_code">
+				--
+			</span>
+			<div id="confirm_js_cancel">
+				Close
+			</div>
+			<div id="confirm_js_cancel_x">
+				X
+			</div>
+		</div>
+
+		<script src="/static/yw/javascript/helpers.js"></script>
+		<script src="/static/lib/jscolor.min.js"></script>
+		<script src="/static/yw/javascript/modals.js"></script>
+		<script src="/static/yw/javascript/menu.js"></script>
+		<script src="/static/yw/javascript/permissions.js"></script>
+		<script src="/static/yw/javascript/chat.js"></script>
+		<script src="/static/yw/javascript/owot.js"></script>
+	</body>
+</html>

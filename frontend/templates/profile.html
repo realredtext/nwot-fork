@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}
+	Profile | Our World of Text
+{% endblock %}
+
+{% block header %}
+	<h1>Your account</h1>
+{% endblock %}
+
+{% block endhead %}
+<script>
+	function leave_confirm() {
+		return confirm("Are you sure you want to leave this world? This action cannot be done, unless the owner adds you back.");
+	}
+</script>
+{% endblock %}
+
+{% block content %}
+	<div class="content_set">
+		<div class="content_set_title">Claim a World</div>
+		<div class="content_set_content">
+			{% if message %}
+				<span style="font-size:80%"><i>{{ message }}</i></span>
+			{% endif %}
+			<form method="POST" action="."><div style='display:none'><input type='hidden' name='csrfmiddlewaretoken' value='{{ csrftoken }}' /></div>
+				<input type="hidden" name="form" value="claim">
+				World name: 
+				<input type="text" name="worldname" value="">
+				<input type="submit" value="Claim">
+			</form>
+		</div>
+	</div>
+
+	{% if worlds_owned %}
+		<div class="content_set">
+			<div class="content_set_title">Worlds you own</div>
+			<div class="content_set_content">
+				<ul>
+					{% for world in worlds_owned %}
+					<li><a href="{{ world.get_absolute_url }}">{{ world.url }}</a>, 
+						{% if world.public_writable %}
+							publicly editable,
+						{% else %}
+							{% if world.public_readable %}
+								publicly visible (but not editable),
+							{% else %}
+								not publicly visible,
+							{% endif %}
+						{% endif %}
+						{{ world.whitelist_set_count }} member{{ world.member_plural }}.
+						{{ world.views }} view{{ world.views_plural }}.
+						<a href="{{ world.conf_url }}">options</a>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	{% endif %}
+	{% if memberships %}
+	<form method="POST" action="." onsubmit="return leave_confirm();" id="leave">
+		<input type="hidden" name="form" value="leave">
+		<div class="content_set">
+			<div class="content_set_title">Worlds you're a member of</div>
+			<div class="content_set_content">
+				<ul>
+				{% for world in memberships %}
+					<li>
+						<a href="{{ world.get_absolute_url }}">{{ world.url }}</a>
+						<button name="leave_{{ world.name }}">Leave</button>
+					</li>
+				{% endfor %}
+				</ul>
+			</div>
+		</div>
+	</form>
+	{% endif %}
+
+	<div class="content_set">
+		<div class="content_set_title">Settings</div>
+		<div class="content_set_content">
+			{% if accountSystem == "uvias" %}
+				<a href="{{ profilePath }}">Manage profile</a>
+			{% else %}
+				<a href="/accounts/password_change/">Change Password</a>
+				{% if !email_verified && ver_count == 0 %}
+				<br>
+				<a href="/accounts/verify_email/{{ csrftoken }}/">Verify Email</a>
+				{% endif %}
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}

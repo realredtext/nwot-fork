@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}
+	User Search | Our World of Text
+{% endblock %}
+
+{% block header %}
+	<h1>User Search</h1>
+{% endblock %}
+
+{% block content %}
+	<div class="content_set">
+		<div class="content_set_title">Search for user</div>
+		<div class="content_set_content">
+			{% if message %}
+				<span style="font-size:80%"><i>{{ message }}</i></span>
+			{% endif %}
+			<form method="POST" action=".">
+				Find Users: 
+				<input type="text" name="search_query" value="">
+				<input type="submit" value="Find">
+			</form>
+		</div>
+	</div>
+	{% if users.length > 0 %}
+		<div class="content_set">
+			<div class="content_set_title">Users found:</div>
+			<div class="content_set_content">
+			<table>
+				<tbody>
+					<tr>
+						<th>
+							ID
+						</th>
+						<th>
+							Username
+						</th>
+						{% if accountSystem == "uvias" %}
+						<th>
+							Display Name
+						</th>
+						{% endif %}
+						<th>
+							Active
+						</th>
+						<th>
+							Level
+						</th>
+						{% if accountSystem == "uvias" %}
+						<th>
+							Rank
+						</th>
+						{% endif %}
+						<th>
+							Last Login
+						</th>
+						<th>
+							Date Joined
+						</th>
+						<th>
+							Worlds Owned
+						</th>
+					</tr>
+					{% for user in users %}
+					<tr>
+						<td>
+							{{user.id}}
+						</td>
+						{% if accountSystem == "uvias" %}
+						<td>
+							{{user.login_name}}
+						</td>
+						{% endif %}
+						<td>
+							{{user.username}}
+						</td>
+						<td>
+							{{user.is_active}}
+						</td>
+						<td>
+							{{user.level}}
+						</td>
+						{% if accountSystem == "uvias" %}
+						<td>
+							{{user.rank_name}}
+						</td>
+						{% endif %}
+						<td>
+							{{user.last_login|safe}}
+						</td>
+						<td>
+							{{user.date_joined|safe}}
+						</td>
+						<td>
+							{{user.worlds_owned}}
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			</div>
+		</div>
+	{% else %}
+	<b>No users found (or no search yet)</b>
+	{% endif %}
+{% endblock %}

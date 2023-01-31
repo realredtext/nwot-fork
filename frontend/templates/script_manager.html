@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}
+	Script Manager | Our World of Text
+{% endblock %}
+
+{% block header %}
+	<h1>Script Manager</h1>
+{% endblock %}
+
+{% block content %}
+	<div class="content_set">
+		<div class="content_set_title">Create Script</div>
+		<div class="content_set_content">
+			{% if creation_message %}
+				<span style="font-size:80%"><i>{{ creation_message }}</i></span>
+			{% endif %}
+			<form method="POST" action=".">
+				Create Script: 
+				<input type="text" name="scriptname" value="">
+				<input type="submit" value="Create">
+			</form>
+		</div>
+	</div>
+	{% if scripts.length > 0 %}
+		<div class="content_set">
+			<div class="content_set_title">Your Scripts</div>
+			<div class="content_set_content">
+				<ul>
+					{% for script in scripts %}
+					<li>
+						<span>{{ script.name }}</span>, 
+						{% if script.enabled %}
+							(enabled)
+						{% else %}
+							(disabled)
+						{% endif %}
+						<a href="/script_manager/edit/{{ script.name }}/">edit</a>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	{% endif %}
+	{% if user.superuser %}
+		<div class="content_set">
+			<div class="content_set_title">Delete script</div>
+		<div class="content_set_content">
+			{% if deletion_message %}
+				<span style="font-size:80%"><i>{{ deletion_message }}</i></span>
+			{% endif %}
+			<form method="POST" action=".">
+				Delete Script: 
+				<input type="text" name="specifiedscript" value="">
+				<input type="submit" value="Delete">
+			</form>
+		</div>
+		</div>
+	{% endif %}
+{% endblock %}
