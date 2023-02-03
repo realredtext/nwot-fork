@@ -258,6 +258,18 @@ module.exports = async function(ws, data, send, vars, evars) {
 		help: function() {
 			return serverChatResponse(generate_command_list(), data.location);
 		},
+		users: function() {
+		    var list = [];
+			var count = 0;
+			wss.clients.forEach((client) => {
+				if(client.sdata.world.name === evars.world.name) {
+					list[count] = "<div style=\"background-color: #DADADA;font-family: monospace;\">"+"<b>["+client.sdata.clientId+"]</b>"+": "+(client.sdata.user.username||"(anon)")+", "+client.sdata.channel+"</div>";
+					count++;
+				};
+			});
+			
+			serverChatResponse(list.join(""));
+		},
 		passive: function() {
 			ws.sdata.blockServerChats = !ws.sdata.blockServerChats;
 		},
@@ -474,6 +486,8 @@ module.exports = async function(ws, data, send, vars, evars) {
 			case "block":
 				com.block(args[1]);
 				return;
+			case "users":
+				if(user.superuser) com.users();
 			case "passive":
 				com.passive();
 				return;
