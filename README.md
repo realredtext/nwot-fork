@@ -2,14 +2,14 @@
 
 **These first few are not required***
 
-1?. Install git with your preferred package installer (All examples here will assume the **apt** package manager)
+1?. Install git with your preferred package installer (Assuming the **apt** package manager)
 ```bash
-	sudo apt-get update
-	sudo apt install git
+    sudo apt-get update
+    sudo apt install git
 ```
 2?. Clone this repo
 ```bash
-	git clone https://github.com/realredtext/nwot-fork.git owot
+    git clone https://github.com/realredtext/nwot-fork.git owot
 ```
 (The **owot** at the end is the directory's name, by default it will be named after the repo you are cloning)
 
@@ -18,9 +18,9 @@
 1: After switching to the **owot/** directory, run this series of commands:
 
 ```bash
-	npm install
-	node main.js
-	node main.js
+    npm install
+    node main.js
+    node main.js
 ```
 The **node main.js** command is run twice, the first time to set up the ../data/ directory, the 2nd time to add the .sqlite files to it
 
