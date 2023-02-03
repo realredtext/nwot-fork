@@ -235,8 +235,8 @@ module.exports = async function(ws, data, send, vars, evars) {
 	}
 
 	var com = {
-		worlds: function() {
-			var topCount = 1000;
+		worlds: function(worldCount) {
+			var topCount = worldCount || 1000;
 			var lst = topActiveWorlds(topCount);
 			var worldList = "";
 			for(var i = 0; i < lst.length; i++) {
@@ -270,7 +270,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 				};
 			});
 			
-			serverChatResponse("Users on "+"/"+evars.world.name+":<br>"+list.join(""));
+			serverChatResponse("Users on "+"/"+evars.world.name+":<br>"list.join(""));
 		},
 		passive: function() {
 			ws.sdata.blockServerChats = !ws.sdata.blockServerChats;
