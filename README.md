@@ -1,116 +1,34 @@
-# Our World Of Text README #
+# Our World Of Text setup
 
-# OWOT Dev setup instructions
+**These first few are not required***
 
+1?. Install git with your preferred package installer (All examples here will assume the **apt** package manager)
+```bash
+	sudo apt-get update
+	sudo apt install git
+```
+2?. Clone this repo
+```bash
+	git clone https://github.com/realredtext/nwot-fork.git owot
+```
+(The **owot** at the end is the directory's name, by default it will be named after the repo you are cloning)
 
-Lets iterate over how to start developing with us!
+# Optional steps over
 
-You'll need NodeJs : https://nodejs.org/ ->
+1: After switching to the **owot/** directory, run this series of commands:
 
- - Your platform should be autodetected, but incase it isn't right:
- 
-   - https://nodejs.org/en/download/ gives more specific options:
-   
-     I'll be downloading the LTS 'Windows Installer (.msi)' for 64-bit
-     
- - LTS is the stable version of node, which is for folks like us!
+```bash
+	npm install
+	node main.js
+	node main.js
+```
+The **node main.js** command is run twice, the first time to set up the ../data/ directory, the 2nd time to add the .sqlite files to it
 
-You'll need Git : https://git-scm.com/ ->
+After running **node main.js** for the 2nd time, you will be prompted to create a superuser (y/n).
+This user will be operator by default.
 
- - I'll be getting the GUI from their downloads link https://git-scm.com/downloads
- - Download based on your platform ( In my case 'Windows' )
- - A download popup should appear, otherwise use the link "If your download hasn't started, click here to download manually."
- - Run it
- - Installing windows version gives me these options:
-    'Windows Explorer integration: Bash, GUI'
-    both of which I HIGHLY recommend, because they're both awesome!
- - Git LFS (large file support) is always a plus, and file associations are great also!
- - I also set NotePad++ to my default commit message thingamabob, which I love anyways.
- - etc, etc, etc
-    
-Next, we'll clone the repository to some workspace
-I keep all of my projects in my /Desktop folder, ex:
-    
-    C:\Users\Jonathan\Desktop\Projects\Node
-    
-So i'll open up a terminal and navigate to that directory:
-    
-    cd C:\Users\Jonathan\Desktop\Projects\Node
-    
-Now i'll use git from the command line (its added to your environment 'path' variable, so its a global command)
-    
-    'git clone https://gitlab.com/System2k/NodeWorldOfText.git'
-    
-You'll need to login to GitLab, because at the time of this writting, the repository is private:
+Enter the username, password, and reconfirm the password to create one.
 
-A popup window should appear, so enter the email you used to register your GitLab
-account, and the password you setup also.
+Open up localhost:port, where port is the number the terminal says OWOT is running on
 
-- If that window never appeared, or you don't want to use the GUI for some reason (hit exit button), you should see the following in your terminal:
-    
-    Login failed, use ctrl+c to cancel basic credential prompt.
-    Username for 'https://gitlab.com':
-    
-After that, enter your password
-    
-    Password for 'https://< your username|email >@gitlab.com':
-    
-And if you've entered correct credentials, and have the permissions necessary,
-you should see the repository cloning via git.
-It will complete somewhat quickly, and say ' done.' when its done.
-
-Now we'll need to install dependencies!
-In terminal, navigate to the repository we cloned:
-    
-    cd C:\Users\Jonathan\Desktop\Projects\Node\NodeWorldOfText
-    
-Now we use Node JS's package manager (came with our fresh install of Node JS)
-to install the dependencies using this command:
-    
-    npm install
-    
-npm is also a global command, so it can be executed anywhere in theory.
-The above command tells npm to install dependencies given by the repository's
-    
-    package.json
-    
-After the package installation process is done, we're ready to go!
-Lets test out the server for fun!
-
-Navigate to the repository
-    
-    cd C:\Users\Jonathan\Desktop\Projects\Node\NodeWorldOfText
-    
-Now use 'node' command to start the server using the main script:
-    
-    node runserver.js
-    
-You should now see
-    Compiling HTML templates...
-    Handling previous error logs (if any)
-    Loading modules...
-    Starting server...
-    Running server in HTTP mode
-    Initializing server...
-    You just installed the server,
-    which means you don't have any superusers defined.
-    Would you like to create one now? (yes/no):
-    
-Type 'yes' and type your desired username -> your password -> confirm password
-
-    Superuser created successfully.
-    
-    Server is running.
-    Address: ::
-    Port: 11001
-    >>
-    
-Open up your browser and type in
-	
-	'localhost:11001'
-    
-Substituting the port number for whatever your terminal said the port was.
-
-You should see a neato OWOT client appear just as if you were on ourworldoftext.com!
-
-If you have any issues, you can try our Discord!
+# The original README.md did not mention this, but LOG IN with that superuser name and password, you will not be logged in by default
