@@ -60,6 +60,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 
 	// sends `[ Server ]: <message>` in chat.
 	function serverChatResponse(message, location) {
+		if(!location) location = data.location;
 		if(!ws.sdata.blockServerChats) send({
 			nickname: "[ Server ]",
 			realUsername: "[ Server ]",
@@ -269,7 +270,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 				};
 			});
 			
-			serverChatResponse(list.join(""));
+			serverChatResponse("Users on "+"/"+evars.world.name+":<br>"+list.join(""));
 		},
 		passive: function() {
 			ws.sdata.blockServerChats = !ws.sdata.blockServerChats;
