@@ -142,7 +142,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 
 		// superuser
 		[2, "worlds", null, "list all worlds", null],
-		[2, "users", null, "shows all the users on your world", null]
+		[2, "users", null, "shows all the users on your world", null],
 
 		// staff
 		[1, "channel", null, "get info about a chat channel"],
