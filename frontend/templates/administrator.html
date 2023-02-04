@@ -140,7 +140,7 @@
 		<div class="content_set_content">
 			<form onsubmit="return goto_config();">
 				World name: 
-				<input type="text" name="worldname" id="worldname_config" value="">
+				<input type="text" name="worldname" id="worldname_config" value="" autocomplete="off">
 				<input type="submit" value="Edit">
 			</form>
 		</div>
@@ -151,7 +151,7 @@
 		<div class="content_set_content">
 			<form onsubmit="return goto_download();">
 				World name: 
-				<input type="text" name="worldname" id="worldname_download" value="">
+				<input type="text" name="worldname" id="worldname_download" value="" autocomplete="off">
 				<input type="submit" value="Download">
 			</form>
 		</div>
@@ -163,7 +163,7 @@
 		<div class="content_set_content">
 			<form onsubmit="return goto_user();">
 				User name: 
-				<input type="text" name="username" id="username_config" value="">
+				<input type="text" name="username" id="username_config" value="" autocomplete="off">
 				<input type="submit" value="Edit">
 			</form>
 		</div>
@@ -200,7 +200,7 @@
 		<div class="content_set_content">
 			<form onsubmit="return goto_custom_rank_usr();">
 				User name: 
-				<input type="text" name="username" id="custom_rank_username_config" value="">
+				<input type="text" name="username" id="custom_rank_username_config" value="" autocomplete="off">
 				<input type="submit" value="Modify">
 			</form>
 		</div>
@@ -236,7 +236,7 @@
 			{% endif %}
 			<form method="POST" action=".">
 				Text: 
-				<input type="text" name="announcement" id="announcement" value="{{ announcement }}" style="width: 100%;">
+				<input type="text" autocomplete="off" name="announcement" id="announcement" value="{{ announcement }}" style="width: 100%;">
 				<input type="submit" value="Set">
 			</form>
 		</div>
@@ -247,12 +247,12 @@
 		<div class="content_set_content">
 			<form onsubmit="return goto_user_by_username();">
 				User name: 
-				<input type="text" name="username" id="user_info_by_username" value="">
+				<input type="text" name="username" id="user_info_by_username" value="" autocomplete="off">
 				<input type="submit" value="Enter">
 			</form>
 			<form onsubmit="return goto_user_by_id();">
 				User id: 
-				<input type="text" name="username" id="user_info_by_id" value="">
+				<input type="text" name="username" id="user_info_by_id" value="" autocomplete="off">
 				<input type="submit" value="Enter">
 			</form>
 		</div>
