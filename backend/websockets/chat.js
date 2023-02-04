@@ -142,7 +142,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 		[3, "uptime", null, "get uptime of server", null],
 
 		// superuser
-		[2, "worlds", null, "list all worlds", null],
+		[2, "worlds", ["count"], "list all worlds", "15"],
 		[2, "users", null, "shows all the users on your world", null],
 
 		// staff
@@ -270,7 +270,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 				};
 			});
 			
-			serverChatResponse("Users on "+"/"+evars.world.name+":<br>"list.join(""));
+			serverChatResponse("Users on "+"/"+evars.world.name+":<br>"+list.join(""));
 		},
 		passive: function() {
 			ws.sdata.blockServerChats = !ws.sdata.blockServerChats;

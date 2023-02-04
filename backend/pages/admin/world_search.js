@@ -38,6 +38,7 @@ module.exports.POST = async function(req, serve, vars, evars) {
 		for(var i in worlds) {
 			if(worlds[i].name.includes(searchQuery)) {
 				worlds[i].properties = JSON.parse(worlds[i].properties);
+				worlds[i].views = (worlds[i].properties.views ?? 0).toString();
 				worldsWithQuery.push(worlds[i]);
 				worldCount++
 			};
