@@ -3156,7 +3156,8 @@ async function manageWebsocketConnection(ws, req) {
 			user: ws.sdata.user.username,
 			clientId: ws.sdata.clientId,
 			world: ws.sdata.world.name || "(main)",
-			channel: ws.sdata.channel
+			channel: ws.sdata.channel,
+			ipAddress: ws.sdata.ipAddress
 		})
 	}))
 	// Some messages might have been received before the socket finished opening

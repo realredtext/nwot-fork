@@ -27,7 +27,7 @@
 			<div class="socket_content" id="sockets">
 			{% for socket in socket_list %}
 				<span id={{ socket.channel }}>
-				[World: {{socket.world}}, Name: {{socket.username}}, Level: {{socket.level}}, ID: {{socket.clientId}}, Monitor: {{socket.monitorSocket}}, Channel: {{socket.channel}}{%if user.operator%}, IP: {{socket.ipAddress}}{%endif%}]
+				[World: {{socket.world}}, Name: {{socket.username}}, Level: {{socket.level}}, ID: {{socket.clientId}}, Monitor: {{socket.monitorSocket}}, Channel: {{socket.channel}}, IP: {{socket.ipAddress}}]
 				</span><br>
 			{% endfor %}
 			</div>

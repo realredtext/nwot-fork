@@ -27,9 +27,9 @@ module.exports.GET = async function(req, serve, vars, evars) {
 			username: sdata.user.username,
 			clientId: sdata.clientId,
 			world: sdata.world.name || "/",
-			channel: sdata.channel
+			channel: sdata.channel,
+			ipAddress: sdata.ipAddress
 		};
-		if(user.operator) data.ipAddress = sdata.ipAddress;		
 		list.push(data);
 	});
 	

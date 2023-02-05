@@ -12,6 +12,20 @@ socket.onmessage = function(msg) {
 	if(ws_functions[data.kind]) ws_functions[data.kind](data);
 };
 
+function formatData(data) {
+	if(typeof data !== typeof {}) return;
+
+	let formattedData = "[";
+	formattedData += "World: "+data.world;
+	formattedData += ", Name: "+data.user;
+	formattedData += ", Level: "+data.level;
+	formattedData += ", ID: "+data.clientId;
+	formattedData += ", Monitor: "+data.monitorSocket;
+	formattedData += ", Channel: "+data.channel;
+	formattedData += ", IP: "+data.ipAddress+"]";
+	return formattedData;
+}
+
 var ws_functions = {
 	umonitor_leave: function(data) {
 		var user = data.user;
@@ -37,7 +51,9 @@ var ws_functions = {
 	user_join: function(data) {
 		var clientData = data.data;
 		var newLine = document.createElement("span");
+		newLine.innerText = formatData(JSON.parse(clientData));
 		newLine.id = JSON.parse(clientData).channel;
-		display.append(newLine);
+		newLine.appendChild(document.createElement("br"));
+		display.appendChild(newLine);
 	}
 }
