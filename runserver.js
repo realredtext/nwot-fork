@@ -3151,7 +3151,6 @@ async function manageWebsocketConnection(ws, req) {
 	broadcastuMonitorEvent(JSON.stringify({
 		kind: "user_join",
 		data: JSON.stringify({
-			monitorSocket: ws.sdata.monitorSocket,
 			level: getLevel(ws.sdata.user),
 			user: ws.sdata.user.username,
 			clientId: ws.sdata.clientId,

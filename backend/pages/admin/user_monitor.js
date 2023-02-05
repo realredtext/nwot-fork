@@ -22,7 +22,6 @@ module.exports.GET = async function(req, serve, vars, evars) {
 		var sdata = client.sdata;
 		if(sdata.uMonitorSocket) return;
  		var data = {
-			monitorSocket: sdata.monitorSocket,
 			level: getLevel(sdata.user),
 			username: sdata.user.username,
 			clientId: sdata.clientId,

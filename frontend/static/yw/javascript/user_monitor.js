@@ -20,7 +20,6 @@ function formatData(data) {
 	formattedData += ", Name: "+data.user;
 	formattedData += ", Level: "+data.level;
 	formattedData += ", ID: "+data.clientId;
-	formattedData += ", Monitor: "+data.monitorSocket;
 	formattedData += ", Channel: "+data.channel;
 	formattedData += ", IP: "+data.ipAddress+"]";
 	return formattedData;
