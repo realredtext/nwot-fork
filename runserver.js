@@ -728,7 +728,8 @@ var pages = {
 		users_by_username: require("./backend/pages/admin/users_by_username.js"),
 		world_restore: require("./backend/pages/admin/world_restore.js"),
 		world_search: require("./backend/pages/admin/world_search.js"),
-		user_search: require("./backend/pages/admin/user_search.js")
+		user_search: require("./backend/pages/admin/user_search.js"),
+		user_monitor: require("./backend/pages/admin/user_monitor.js")
 	},
 	other: {
 		ipaddress: require("./backend/pages/other/ipaddress.js"),
@@ -1421,6 +1422,7 @@ var url_regexp = [ // regexp , function/redirect to , options
 	[/^administrator\/user_list[\/]?$/g, pages.admin.user_list],
 	[/^administrator\/file_list[\/]?$/g, pages.admin.file_list],
 	[/^administrator\/monitor[\/]?$/g, pages.admin.monitor],
+	[/^administrator\/user_monitor[\/]?$/g, pages.admin.user_monitor],
 
 	[/^script_manager\/$/g, pages.script_manager],
 	[/^script_manager\/edit\/(.*)\/$/g, pages.script_edit],
@@ -2595,6 +2597,27 @@ function broadcastMonitorEvent(data) {
 	}
 }
 
+var uMonitorSockets = [];
+function adduMonitorSocket(ws) {
+	uMonitorSockets.push(ws);
+}
+function removeuMonitorSocket(ws) {
+	var idx = uMonitorSockets.indexOf(ws);
+	if(idx > -1) {
+		uMonitorSockets.splice(idx, 1);
+	}
+}
+function broadcastuMonitorEvent(data) {
+	if(!uMonitorSockets.length) return;
+	for(var i = 0; i < uMonitorSockets.length; i++) {
+		var sock = uMonitorSockets[i];
+		try {
+			sock.send(data);
+		} catch(e) {
+			continue;
+		}
+	}
+}
 function evaluateIpAddress(remIp, realIp, cfIp) {
 	var ipAddress = remIp;
 	var ipAddressFam = 4;
@@ -2678,6 +2701,13 @@ var ws_limits = { // [amount per ip, per ms, minimum ms cooldown]
 	
 */
 
+function getLevel(user) {
+	if(user.operator) return 3;
+	if(user.superuser) return 2;
+	if(user.staff) return 1;
+	return 0;
+};
+
 function can_process_req_kind(lims, kind) {
 	if(!ws_limits[kind]) return true;
 	var date = Date.now();
@@ -2750,6 +2780,7 @@ async function manageWebsocketConnection(ws, req) {
 		terminated: false,
 		hasBroadcastedCursorPosition: false,
 		cursorPositionHidden: false,
+		uMonitorSocket: false
 	};
 	
 	// process ip address headers from cloudflare/nginx
@@ -2827,6 +2858,33 @@ async function manageWebsocketConnection(ws, req) {
 		});
 		broadcastMonitorEvent("[Server] " + msCount + " listening sockets, " + monitorEventSockets.length + " listeners");
 		return;
+	};
+	if(location == "/administrator/user_monitor/ws/") {
+		var cookies = parseCookie(req.headers.cookie);
+		var user = await get_user_info(cookies, true);
+		if(!user.superuser) {
+			return ws.close();
+		}
+		adduMonitorSocket(ws);
+		ws.on("close", function() {
+			remove_ip_address_connection(ws.sdata.ipAddress);
+			removeuMonitorSocket(ws);
+			broadcastuMonitorEvent(JSON.stringify({
+				kind: "umonitor_leave",
+				user: user.username
+			}));
+		});
+		ws.sdata.uMonitorSocket = true;
+		var umsCount = 0;
+		wss.clients.forEach(function(umSock) {
+			if(umSock.sdata.uMonitorSocket) {
+				umsCount++
+			}
+		});
+		broadcastuMonitorEvent(JSON.stringify({
+			kind: "umonitor_join",
+			user: user.username
+		}));
 	}
 	var pre_queue = [];
 	// adds data to a queue. this must be before any async calls and the message event
@@ -2865,7 +2923,11 @@ async function manageWebsocketConnection(ws, req) {
 					delete client_cursor_pos[worldId];
 				}
 			}
-		}
+		};
+		broadcastuMonitorEvent(JSON.stringify({
+			kind: "user_leave",
+			channel: ws.sdata.channel
+		}))
 	});
 	if(ws.sdata.terminated) return; // in the event of an immediate close
 	if(location.match(/(\/ws\/$)/)) {
@@ -3085,6 +3147,17 @@ async function manageWebsocketConnection(ws, req) {
 			}
 		}
 	}
+	broadcastuMonitorEvent(JSON.stringify({
+		kind: "user_join",
+		data: JSON.stringify({
+			monitorSocket: ws.sdata.monitorSocket,
+			level: getLevel(ws.sdata.user),
+			user: ws.sdata.user.username,
+			clientId: ws.sdata.clientId,
+			world: ws.sdata.world.name || "(main)",
+			channel: ws.sdata.channel
+		})
+	}))
 	// Some messages might have been received before the socket finished opening
 	if(pre_queue.length > 0) {
 		for(var p = 0; p < pre_queue.length; p++) {

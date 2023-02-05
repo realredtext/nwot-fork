@@ -451,7 +451,7 @@ function addChat(chatfield, id, type, nickname, message, realUsername, op, admin
 			tagDom.style.fontWeight = "bold";
 			nickTitle.push("Administrator");
 		} else if(staff) {
-			tagDom.innerHTML = "(MOD)";
+			tagDom.innerHTML = "(M)";
 			tagDom.style.color = "#009933";
 			tagDom.style.fontWeight = "bold";
 			nickTitle.push("Staff");

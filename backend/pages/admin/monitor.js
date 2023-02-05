@@ -2,7 +2,9 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	var HTML = evars.HTML;
 	var user = evars.user;
 
-	if(!user.superuser) return;
+	if(!user.superuser) {
+		return await dispage("404", null, req, serve, vars, evars);
+	};
 
 	var memTileCache = vars.memTileCache;
 

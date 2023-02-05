@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}
+	User Monitor | Our World of Text
+{% endblock %}
+
+{% block endhead %}
+	<script src="/static/yw/javascript/user_monitor.js" defer></script>
+	<style>
+		.socket_content {
+			background: "#CCCCCC";
+			border: 2px solid "#AAAAAA";
+		}
+	</style>
+{% endblock %}
+
+{% block header %}
+	<h1>User Monitor</h1>
+	<span><a href="/administrator/">« Back to Admin Panel</a></span>
+{% endblock %}
+
+{% block content %}
+	<div class="content_set">
+		<div class="content_set_title">Connected Sockets</div>
+		<div class="content_set_content">
+			<i style="font-size: 80%" id="message"></i>
+			<div class="socket_content" id="sockets">
+			{% for socket in socket_list %}
+				<span id={{ socket.channel }}>
+				[World: {{socket.world}}, Name: {{socket.username}}, Level: {{socket.level}}, ID: {{socket.clientId}}, Monitor: {{socket.monitorSocket}}, Channel: {{socket.channel}}{%if user.operator%}, IP: {{socket.ipAddress}}{%endif%}]
+				</span>
+			{% endfor %}
+			</div>
+		</div>
+	</div>
+{% endblock %}
