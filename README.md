@@ -4,7 +4,7 @@
 
 1?. Install git with your preferred package installer (Assuming the **apt** package manager)
 ```bash
-    sudo apt-get update
+    sudo apt update
     sudo apt install git
 ```
 2?. Clone this repo
