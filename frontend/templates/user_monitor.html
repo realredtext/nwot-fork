@@ -20,7 +20,7 @@
 {% endblock %}
 
 {% block content %}
-	<div class="content_set">
+	<div class="content_set" style="width: 1000px;">
 		<div class="content_set_title">Connected Sockets</div>
 		<div class="content_set_content">
 			<i style="font-size: 80%" id="message"></i>
@@ -28,7 +28,7 @@
 			{% for socket in socket_list %}
 				<span id={{ socket.channel }}>
 				[World: {{socket.world}}, Name: {{socket.username}}, Level: {{socket.level}}, ID: {{socket.clientId}}, Monitor: {{socket.monitorSocket}}, Channel: {{socket.channel}}{%if user.operator%}, IP: {{socket.ipAddress}}{%endif%}]
-				</span>
+				</span><br>
 			{% endfor %}
 			</div>
 		</div>

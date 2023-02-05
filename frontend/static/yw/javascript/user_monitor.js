@@ -38,6 +38,6 @@ var ws_functions = {
 		var clientData = data.data;
 		var newLine = document.createElement("span");
 		newLine.id = JSON.parse(clientData).channel;
-		message.append(newLine);
+		display.append(newLine);
 	}
 }

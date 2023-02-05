@@ -2885,6 +2885,7 @@ async function manageWebsocketConnection(ws, req) {
 			kind: "umonitor_join",
 			user: user.username
 		}));
+		return;
 	}
 	var pre_queue = [];
 	// adds data to a queue. this must be before any async calls and the message event
@@ -2966,7 +2967,7 @@ async function manageWebsocketConnection(ws, req) {
 
 	var world = await world_get_or_create(world_name);
 	if(ws.sdata.terminated) return;
-	if(!world) {
+	if(!world && !ws.sdata.uMonitorSocket) {
 		return error_ws("NO_EXIST", "World does not exist");
 	}
 
