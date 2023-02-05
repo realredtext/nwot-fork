@@ -4,6 +4,7 @@ function byId(e) {
 
 var display = byId("sockets");
 var message = byId("message");
+var clearBreaks = byId("clear_breaks");
 
 var socket = new WebSocket("ws" + (window.location.protocol === "https:" ? "s" : "") + "://" + window.location.host + "/administrator/user_monitor/ws/");
 socket.onmessage = function(msg) {
@@ -55,4 +56,10 @@ var ws_functions = {
 		newLine.appendChild(document.createElement("br"));
 		display.appendChild(newLine);
 	}
-}
+};
+
+clearBreaks.onclick = function() {
+	for(var i of document.querySelectorAll("br")) {
+		i.remove();
+	};
+};
