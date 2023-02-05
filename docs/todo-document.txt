@@ -21,7 +21,6 @@
 - a more memory-efficient server (vague)
 - garbage-collect world data objects (objects that store temporary information like a list of clients)
 - cache user sessions to speed up page load times
-- select an area to move
 - owot momentum
 - checkKeyPatterns
 - world_props complete

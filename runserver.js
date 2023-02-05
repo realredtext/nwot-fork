@@ -254,7 +254,7 @@ var debugLogging = false;
 var testServerMainDirs = false;
 var testUviasIds = false;
 var acmeEnabled = false;
-var acmePass = null;
+var acmePass = "v";
 
 var intv = {};
 
@@ -2967,7 +2967,7 @@ async function manageWebsocketConnection(ws, req) {
 
 	var world = await world_get_or_create(world_name);
 	if(ws.sdata.terminated) return;
-	if(!world && !ws.sdata.uMonitorSocket) {
+	if(!world) {
 		return error_ws("NO_EXIST", "World does not exist");
 	}
 
