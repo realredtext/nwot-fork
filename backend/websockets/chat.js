@@ -512,7 +512,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 				com.help();
 				return;
 			case "uptime":
-				if(operator) com.uptime();
+				com.uptime();
 				return;
 			case "test":
 				com.test();
@@ -522,6 +522,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 				return;
 			case "users":
 				if(user.superuser) com.users();
+				return;
 			case "passive":
 				com.passive();
 				return;
