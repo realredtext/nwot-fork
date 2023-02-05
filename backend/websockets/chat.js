@@ -235,8 +235,12 @@ module.exports = async function(ws, data, send, vars, evars) {
 	}
 
 	var com = {
-		worlds: function(worldCount) {
-			var topCount = worldCount || 1000;
+		worlds: function() {
+			if(!user.superuser) {
+				serverChatResponse("Invalide command: /worlds");
+				return;
+			};
+			var topCount = 1000;
 			var lst = topActiveWorlds(topCount);
 			var worldList = "";
 			for(var i = 0; i < lst.length; i++) {
@@ -261,6 +265,10 @@ module.exports = async function(ws, data, send, vars, evars) {
 			return serverChatResponse(generate_command_list(), data.location);
 		},
 		users: function() {
+			if(!user.superuser) {
+				serverChatResponse("Invalide command: /users");
+				return;
+			}
 		    var list = [];
 			var count = 0;
 			wss.clients.forEach((client) => {
@@ -274,6 +282,19 @@ module.exports = async function(ws, data, send, vars, evars) {
 		},
 		passive: function() {
 			ws.sdata.blockServerChats = !ws.sdata.blockServerChats;
+			send({
+				nickname: "[ Client ]",
+				realUsername: "[ Client ]",
+				id: 0,
+				message: "Server chat blocking set to "+ws.sdata.blockServerChats,
+				registered: true,
+				location: data.location,
+				op: true,
+				staff: true,
+				admin: true,
+				color: "",
+				kind: "chat"
+			})
 		},
 		block: function(id) {
 			if(id != "*") {
@@ -374,6 +395,10 @@ module.exports = async function(ws, data, send, vars, evars) {
 			}
 		},
 		channel: async function() {
+			if(!user.staff) {
+				serverChatResponse("Invalide command: /channel");
+				return;
+			}
 			var worldId = world.id;
 			if(data.location == "global") worldId = 0;
 			var channels = await db_ch.all("SELECT * FROM channels WHERE world_id=?", worldId);
@@ -399,6 +424,10 @@ module.exports = async function(ws, data, send, vars, evars) {
 			return serverChatResponse(infoLog, data.location);
 		},
 		mute: function(id, time) {
+			if(!user.staff) {
+				serverChatResponse("Invalide command: /mute");
+				return;
+			}
 			id = san_nbr(id);
 			time = san_nbr(time); // in seconds
 			var clientFound = false;
@@ -425,6 +454,10 @@ module.exports = async function(ws, data, send, vars, evars) {
 			}
 		},
 		clearmutes: function() {
+			if(!user.staff) {
+				serverChatResponse("Invalide command: /clearmutes");
+				return;
+			}
 			var cnt = 0;
 			for(var i in blocked_ips) {
 				delete blocked_ips[i];
@@ -450,8 +483,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 			return serverChatResponse(idstr, data.location);
 		},
 		stats: function() {
-			if(world.name != "") return;
-			var stat = "Stats for main world<br>";
+			var stat = "Stats for "+(world.name||"(main)")+"<br>";
 			stat += "Creation date: " + html_tag_esc(create_date(world.created_at)) + "<br>";
 			var props = JSON.parse(world.properties);
 			var viewcount = props.views;
@@ -512,7 +544,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 				com.stats();
 				return;
 			default:
-				serverChatResponse("Invalid command: " + html_tag_esc(msg) + ". Try /help for a list of commands.");
+				serverChatResponse("Invalid command: " + html_tag_esc(msg));
 		}
 	}
 

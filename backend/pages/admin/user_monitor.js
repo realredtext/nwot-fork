@@ -25,7 +25,7 @@ module.exports.GET = async function(req, serve, vars, evars) {
 			level: getLevel(sdata.user),
 			username: sdata.user.username,
 			clientId: sdata.clientId,
-			world: sdata.world.name || "/",
+			world: sdata.world.name || "(main)",
 			channel: sdata.channel,
 			ipAddress: sdata.ipAddress
 		};
