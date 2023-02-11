@@ -142,13 +142,14 @@ module.exports = async function(ws, data, send, vars, evars) {
 		[3, "uptime", null, "get uptime of server", null],
 
 		// superuser
-		[2, "worlds", ["count"], "list all worlds", "15"],
+		[2, "worlds", ["count"], "list all worlds", null],
 		[2, "users", null, "shows all the users on your world", null],
 
 		// staff
 		[1, "channel", null, "get info about a chat channel"],
 		[1, "mute", ["id", "time (seconds)"], "mute a user for all clients", "1220 100"],
 		[1, "clearmutes", null, "unmute all clients"],
+		[1, "mutes", null, "get all muted IPs", null],
 
 		// general
 		[0, "help", null, "list all commands", null],
@@ -366,7 +367,8 @@ module.exports = async function(ws, data, send, vars, evars) {
 						staff: user.staff,
 						color: data.color,
 						kind: "chat",
-						privateMessage: "to_me"
+						privateMessage: "to_me",
+						channel: channel
 					};
 					if(user.authenticated && user.id in ranks_cache.users) {
 						var rank = ranks_cache[ranks_cache.users[user.id]];
@@ -386,7 +388,8 @@ module.exports = async function(ws, data, send, vars, evars) {
 						staff: false,
 						color: "#000000",
 						kind: "chat",
-						privateMessage: "from_me"
+						privateMessage: "from_me",
+						channel: channel
 					});
 				}
 			});
@@ -452,6 +455,25 @@ module.exports = async function(ws, data, send, vars, evars) {
 			} else {
 				return serverChatResponse("Client not found", data.location);
 			}
+		},
+		mutes: function() {
+			if(!user.staff) {
+				serverChatResponse("Invalid command: /mutes");
+				return;
+			};
+			if(JSON.stringify(blocked_ips) === "{}") {
+				serverChatResponse("No muted IPs.");
+				return;
+			}
+			var list = [];
+			for(var i in blocked_ips) {
+				list.push(`${i}: expires at ${create_date(blocked_ips[i])}`);
+			};
+			
+			for(var i = 0; i < list.length; i++) {
+				list[i] = `<div style="background-color: #DADADA;font-family: monospace;">${list[i]}</div>`;		
+			};
+			serverChatResponse(`Muted IPs:<br>${list.join("")}`)
 		},
 		clearmutes: function() {
 			if(!user.staff) {
@@ -540,6 +562,9 @@ module.exports = async function(ws, data, send, vars, evars) {
 				return;
 			case "whoami":
 				com.whoami();
+				return;
+			case "mutes":
+				if(staff) com.mutes();
 				return;
 			case "stats":
 				com.stats();
