@@ -4,7 +4,6 @@ function byId(e) {
 
 var display = byId("sockets");
 var message = byId("message");
-var clearBreaks = byId("clear_breaks");
 
 var socket = new WebSocket("ws" + (window.location.protocol === "https:" ? "s" : "") + "://" + window.location.host + "/administrator/user_monitor/ws/");
 socket.onmessage = function(msg) {
@@ -50,16 +49,9 @@ var ws_functions = {
 	},
 	user_join: function(data) {
 		var clientData = data.data;
-		var newLine = document.createElement("span");
+		var newLine = document.createElement("div");
 		newLine.innerText = formatData(JSON.parse(clientData));
 		newLine.id = JSON.parse(clientData).channel;
-		newLine.appendChild(document.createElement("br"));
 		display.appendChild(newLine);
 	}
-};
-
-clearBreaks.onclick = function() {
-	for(var i of document.querySelectorAll("br")) {
-		i.remove();
-	};
 };
