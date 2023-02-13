@@ -52,6 +52,30 @@ function create_date(time) {
 	return str;
 }
 
+function create_boolean(val) {
+	if(typeof val === "string") val = val.toLowerCase(); 
+	if(!val) return false;
+	if(val === true) return true;
+	if(val === false) return false;
+	if(typeof val === "string" && val.length && !(["no", "0"].includes(val))) {
+		return true;
+	} else {
+		return false;
+	}
+	if(val.toString().toLowerCase() === "false") return false;
+	if(val.toString().toLowerCase() === "true") return true;
+	if(val === 0 || val === "0") return false;
+	if(typeof val === "object" && val.at) {
+		return !!val.length;
+	}
+	if(typeof val === "object" && JSON.stringify(val) === "{}") {
+		return false;
+	}
+	if(val.toLowerCase() === "yes") return true;
+	if(val.toLowerCase() === "no") return false;
+	return val;
+}
+
 // sanitize number input to be strictly between -9007199254740991 and 9007199254740991
 function san_nbr(x) {
 	if(typeof x == "string") x -= 0;
@@ -1047,5 +1071,6 @@ module.exports = {
 	normalizeCacheTile,
 	parseTextcode,
 	checkURLParam,
-	trimSlash
+	trimSlash,
+	create_boolean
 };

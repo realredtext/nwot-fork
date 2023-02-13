@@ -66,6 +66,7 @@ var dump_dir             = utils.dump_dir;
 var arrayIsEntirely      = utils.arrayIsEntirely;
 var normalizeCacheTile   = utils.normalizeCacheTile;
 var parseTextcode        = utils.parseTextcode;
+var create_boolean		 = utils.create_boolean;
 
 var gzipEnabled = true;
 
@@ -3257,7 +3258,8 @@ var global_data = {
 	parseTextcode,
 	acme_stat: function() { return { enabled: acmeEnabled, pass: acmePass } },
 	uviasSendIdentifier,
-	client_cursor_pos
+	client_cursor_pos,
+	create_boolean
 };
 
 async function sysLoad() {
