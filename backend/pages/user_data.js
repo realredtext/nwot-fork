@@ -23,7 +23,6 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	
 	var res = await db.get("SELECT id, username, email, level, is_active, date_joined FROM auth_user WHERE username=?", query_user);
 	var worldsOwned = await db.get("SELECT count(*) AS cnt FROM world WHERE owner_id=?", res.id);
-	console.log(worldsOwned);
 	res.worlds_owned = worldsOwned.cnt;
 	if(clean_date) res.date_joined = create_date(res.date_joined);
 	res.op = res.level > 2;
