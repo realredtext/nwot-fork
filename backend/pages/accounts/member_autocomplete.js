@@ -8,6 +8,7 @@ function escape_control(str) {
 
 module.exports.GET = async function(req, serve, vars, evars) {
 	var query_data = evars.query_data;
+	var user = evars.user;
 
 	var db = vars.db;
 	var uvias = vars.uvias;
@@ -18,14 +19,16 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	if(!input) input = "";
 	input += "";
 	input = input.trim();
-	if(!input) return serve("");
-	if(input.length == 0) return serve("");
+	if(!input && !user.superuser) return serve("");
+	if(input.length < 4 && !user.superuser) return serve("");
+	
+	var limit = user.superuser?2**32:10;
 
 	var list;
 	if(accountSystem == "uvias") {
-		list = await uvias.all("SELECT username FROM accounts.users WHERE username ILIKE $1::text || '%' ESCAPE '\\' ORDER BY username LIMIT 10", escape_control(input));
+		list = await uvias.all("SELECT username FROM accounts.users WHERE username ILIKE $1::text || '%' ESCAPE '\\' ORDER BY username LIMIT ?", [escape_control(input), limit]);
 	} else if(accountSystem == "local") {
-		list = await db.all("SELECT username FROM auth_user WHERE username LIKE ? || '%' ESCAPE '\\' ORDER BY username", escape_control(input));
+		list = await db.all("SELECT username FROM auth_user WHERE username LIKE ? || '%' ESCAPE '\\' ORDER BY username LIMIT ?", [escape_control(input), limit]);
 	}
 
 	var users = [];
