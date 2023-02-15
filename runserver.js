@@ -255,7 +255,7 @@ var debugLogging = false;
 var testServerMainDirs = false;
 var testUviasIds = false;
 var acmeEnabled = false;
-var acmePass = "v";
+var acmePass = "1234567890";
 
 var intv = {};
 
@@ -3192,6 +3192,7 @@ var global_data = {
 	db_img,
 	db_misc,
 	db_edits,
+	getLevel,
 	db_ch,
 	dispage,
 	ms,

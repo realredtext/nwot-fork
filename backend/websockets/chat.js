@@ -142,7 +142,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 		[3, "uptime", null, "get uptime of server", null],
 
 		// superuser
-		[2, "worlds", ["count"], "list all worlds", null],
+		[2, "worlds", null, "list most 1000 active worlds", null],
 		[2, "users", null, "shows all the users on your world", null],
 
 		// staff
