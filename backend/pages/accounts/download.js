@@ -19,6 +19,7 @@ var time_limits = {};
 module.exports.GET = async function(req, serve, vars, evars) {
 	var path = evars.path;
 	var user = evars.user;
+	var world = evars.world;
 
 	var dispage = vars.dispage;
 	var checkURLParam = vars.checkURLParam;
@@ -34,7 +35,7 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	}
 
 	// not a superuser nor owner
-	var is_owner = world.owner_id == user.id
+	var is_owner = world.owner_id == user.id || user.superuser && world.name == "";
 	if(!(user.superuser || is_owner)) {
 		return await dispage("404", null, req, serve, vars, evars);
 	}

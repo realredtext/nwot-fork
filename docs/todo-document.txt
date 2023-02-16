@@ -15,7 +15,7 @@
 - warning when clicking on urls
 - when zoomed out, client is slow
 - multiple custom user roles
-- world owners can delete individual messages in chatbox. admins can delete from global
+- world owners can delete individual messages in chatbox. admins can delete from global (staff delete everything)
 - menu too big? some scrollbar if longer than screen height
 - language settings?
 - a more memory-efficient server (vague)

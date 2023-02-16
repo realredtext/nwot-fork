@@ -160,18 +160,14 @@ module.exports = async function(data, vars, evars) {
 			dr2 = dr2.time;
 
 			var time = timemachine.time;
-			if(!time) {
-				time = Date.now();
-			} else {
-				var range = dr2 - dr1;
-				var div = range / 1000000;
-				time = Math.floor(div * timemachine.time) + dr1;
-			}
+			if(!time) time = Date.now();
 
-			await db_edits.each("SELECT * FROM edit WHERE world_id=? AND time <= ? AND tileY >= ? AND tileX >= ? AND tileY <= ? AND tileX <= ?",
-				[world.id, time, minY, minX, maxY, maxX], function(data) {
-				if(data.content.charAt(0) == "@") return;
-				var con = JSON.parse(data.content);
+			var oldEdits = await db_edits.all("SELECT * FROM edit WHERE world_id=? AND time <= ? AND tileY >= ? AND tileX >= ? AND tileY <= ? AND tileX <= ?",
+				[world.id, time, minY, minX, maxY, maxX]);
+			for(var i of oldEdits) {
+				(function(edata) {
+				if(edata.content.charAt(0) == "@") return;
+				var con = JSON.parse(edata.content);
 				for(var q in con) {
 					var z = con[q]
 					if(!tiles[z[0] + "," + z[1]]) {
@@ -195,7 +191,8 @@ module.exports = async function(data, vars, evars) {
 						tile_r.properties.color[index_r] = color;
 					}
 				}
-			});
+			})(i)
+			}
 
 			for(var z in tiles) {
 				if(tiles[z]) {

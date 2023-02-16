@@ -2987,7 +2987,6 @@ async function manageWebsocketConnection(ws, req) {
 	if(timemachine.active) {
 		timemachine.time = san_nbr(tm_check[3]);
 		if(timemachine.time < 0) timemachine.time = 0;
-		if(timemachine.time > 1000000) timemachine.time = 1000000;
 	}
 
 	status = { permission, world, timemachine };

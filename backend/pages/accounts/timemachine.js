@@ -37,6 +37,7 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	var world = await world_get_or_create(world_name)
 	if(!world) {
 		return await dispage("404", null, req, serve, vars, evars);
+		console.log("bullshit");
 	}
 
 	if(world.owner_id != user.id && !user.superuser) {
