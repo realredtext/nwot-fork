@@ -22,7 +22,8 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	if(!input && !user.superuser) return serve("");
 	if(input.length < 4 && !user.superuser) return serve("");
 	
-	var limit = user.superuser?2**32:10;
+	var limit = 10;
+	if(user.superuser) limit = Number.MAX_SAFE_INTEGER;
 
 	var list;
 	if(accountSystem == "uvias") {
