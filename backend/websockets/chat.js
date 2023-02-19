@@ -273,7 +273,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 		    var list = [];
 			var count = 0;
 			wss.clients.forEach((client) => {
-				if(client.sdata.world.name === evars.world.name) {
+				if(client.sdata.world_name === evars.world.name) {
 					list[count] = "<div style=\"background-color: #DADADA;font-family: monospace;\">"+"<b>["+client.sdata.clientId+"]</b>"+": "+(client.sdata.user.username||"(anon)")+", "+client.sdata.channel+"</div>";
 					count++;
 				};
