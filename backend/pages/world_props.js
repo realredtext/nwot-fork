@@ -5,6 +5,7 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	var db = vars.db;
 	var world_get_or_create = vars.world_get_or_create;
 	var can_view_world = vars.can_view_world;
+	var announcement = vars.announcement();
 	
 	if(typeof query_data.world != "string") return serve(null, 400);
 	var world = await world_get_or_create(query_data.world);
@@ -36,8 +37,58 @@ module.exports.GET = async function(req, serve, vars, evars) {
 		feature_coord_link: world.feature_coord_link,
 		pathname,
 		chat_permission: properties.chat_permission ? properties.chat_permission : 0,
-		color_text: properties.color_text ? properties.color_text : 0
+		color_text: properties.color_text ? properties.color_text : 0,
+		show_cursor: properties.show_cursor,
+		meta_desc: properties.meta_desc
 	}
+	
+	if(properties.background) {
+		props.background = {
+			path: properties.background
+		};
+		if(properties.background_x) {
+			props.background.x = properties.background_x;
+		};
+		if(properties.background_y) {
+			props.background.y = properties.background_y;
+		};
+		if(properties.background_w) {
+			props.background.w = properties.background_w;
+		};
+		if(properties.background_h) {
+			props.background.h = properties.background_h;
+		};
+		if(properties.background_rmod) {
+			props.background.rmod = properties.background_rmod;
+		};
+		if("background_alpha" in properties) {
+			props.background.alpha = properties.background_alpha;
+		};
+	};
+	
+	if(CONST.tileRows != 8) {
+		props.tileRows = CONST.tileRows;
+	};
+	
+	if(CONST.tileCols != 16) {
+		props.tileCols = CONST.tileCols;
+	};
+	
+	if(properties.page_is_nsfw) {
+		props.nsfw = properties.page_is_nsfw;
+	};
+	
+	if(properties.square_chars) {
+		props.square_chars = true;
+	};
+	
+	if(properties.half_chars) {
+		props.half_chars = true;
+	};
+
+	if(announcement) {
+		props.announce = announcement;
+	};
 
 	serve(JSON.stringify(props), null, {
 		mime: "application/json"
