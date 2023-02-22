@@ -1735,7 +1735,7 @@ function is_unclaimable_worldname(world) {
 	if(!(world[0] == "w" || world[0] == "W")) return false;
 	for(var i = 0; i < world.length; i++) {
 		var seg = world[i];
-		if(!seg.match(/^([\w\.\-]*)$/g) || !seg) return false;
+		if(!seg.match(/^([\w\.\-\~]*)$/g) || !seg) return false;
 	}
 	return true;
 }
@@ -1748,7 +1748,7 @@ async function world_get_or_create(name, do_not_create, force_create) {
 	}
 	var world = await db.get("SELECT * FROM world WHERE name=? COLLATE NOCASE", name);
 	if(!world) { // world doesn't exist, create it
-		if(((name.match(/^([\w\.\-]*)$/g) || is_unclaimable_worldname(name)) && !do_not_create) || force_create) {
+		if(((name.match(/^([\w\.\-\~]*)$/g) || is_unclaimable_worldname(name)) && !do_not_create) || force_create) {
 			var date = Date.now();
 			
 			var feature_go_to_coord = 1;
@@ -2185,7 +2185,7 @@ async function validate_claim_worldname(worldname, vars, evars, rename_casing, w
 		}
 		// make sure segment is valid
 		var claimMainPage = (worldname[i] == "" && worldname.length == 1 && user.superuser); // if superusers claim the front page
-		if(!(worldname[i].match(/^([\w\.\-]*)$/g) && (worldname[i].length > 0 || claimMainPage))) {
+		if(!(worldname[i].match(/^([\w\.\-\~]*)$/g) && (worldname[i].length > 0 || claimMainPage))) {
 			return {
 				error: true,
 				message: "Invalid world name. Contains invalid characters. Must contain either letters, numbers, or _. It can be separated by /"
