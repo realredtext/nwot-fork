@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+	Execute Shell script | Our World of Text
+{% endblock %}
+
+{% block header %}
+	<h1>Execute Shell script</h1>
+	<span><a href="/administrator/">« Back to Admin Panel</a></span>
+{% endblock %}
+
+{% block content %}
+	<div class="content_set">
+		<div class="content_set_title">Execute script</div>
+		<div class="content_set_content">
+			<b>This page is WIP, do NOT expect stability!</b>
+			<form method="POST" action=".">
+				Run script: 
+				<input type="text" name="shell_script" value="" autocomplete="off">
+				<input type="submit" value="Run">
+			</form>
+		</div>
+	</div>
+	{% if message %}
+	<div class="content_set_content">
+		<span style="font-size:80%"><i>{{ message }}</i></span>
+	</div>
+	{% endif %}
+{% endblock %}

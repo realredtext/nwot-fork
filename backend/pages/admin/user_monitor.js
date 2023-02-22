@@ -21,6 +21,7 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	wss.clients.forEach(function(client) {
 		var sdata = client.sdata;
 		if(sdata.uMonitorSocket) return;
+		if(sdata.monitorSocket) return;
  		var data = {
 			level: getLevel(sdata.user),
 			username: sdata.user.username,

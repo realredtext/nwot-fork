@@ -19,9 +19,13 @@ module.exports.GET = async function(req, serve, vars, evars, params) {
 	}
 
 	var client_num = 0;
+	var monitor_num = 0;
+	var uMonitor_num = 0;
 	wss.clients.forEach(function(client) {
-		if(!client.sdata.userClient) return;
-		client_num++;
+		if(client.sdata.userClient) client_num++;
+		if(client.sdata.monitorSocket) monitor_num++;
+		if(client.sdata.uMonitorSocket) uMonitor_num++;
+		
 	});
 
 	var custom_ranks = [
@@ -76,6 +80,8 @@ module.exports.GET = async function(req, serve, vars, evars, params) {
 		uptime: uptime(),
 		machine_uptime: uptime(process.hrtime()[0] * 1000),
 		client_num,
+		monitor_num,
+		uMonitor_num,
 		bypass_key: get_bypass_key(),
 		custom_ranks
 	}

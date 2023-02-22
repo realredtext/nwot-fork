@@ -315,9 +315,11 @@
 	{% endif %}
 
 	<div class="content_set">
-		<div class="content_set_title">Connected Clients</div>
+		<div class="content_set_title">Connected Sockets</div>
 		<div class="content_set_content">
-			<span>{{ client_num }} client(s)</span>
+			<span>{{ client_num }} normal client(s)</span><br>
+			<span>{{ monitor_num }} monitor client(s)</span><br>
+			<span>{{ uMonitor_num }} user monitor client(s)</span>
 		</div>
 	</div>
 {% endblock %}
