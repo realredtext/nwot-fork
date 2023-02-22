@@ -5,16 +5,10 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	var umsCount = vars.umsCount;
 	var dispage = vars.dispage;
 	var wss = vars.wss;
+	var getLevel = vars.getLevel;
 	
 	if(!user.superuser) {
 		return await dispage("404", null, req, serve, vars, evars);
-	};
-	
-	function getLevel(user) {
-		if(user.operator) return 3;
-		if(user.superuser) return 2;
-		if(user.staff) return 1;
-		return 0;
 	};
 	
 	var list = [];

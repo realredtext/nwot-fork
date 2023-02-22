@@ -108,7 +108,7 @@ module.exports.POST = async function(req, serve, vars, evars) {
 
 	if("set_bypass_key" in post_data) {
 		var new_bypass_key = post_data.set_bypass_key;
-		if(!new_bypass_key) new_bypass_key = new_token(25);
+		if(!new_bypass_key) new_bypass_key = new_token(25).toUpperCase();
 		modify_bypass_key(new_bypass_key);
 		return await dispage("admin/administrator", {
 			cons_update_msg: "Bypass key updated successfully"
