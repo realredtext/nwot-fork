@@ -98,9 +98,11 @@ module.exports.POST = async function(req, serve, vars, evars) {
 	var db_edits = vars.db_edits;
 	var modify_bypass_key = vars.modify_bypass_key;
 	var stopServer = vars.stopServer;
+	var new_tokenn = vars.new_token;
 
 	if("set_bypass_key" in post_data) {
 		var new_bypass_key = post_data.set_bypass_key;
+		if(!new_bypass_key) new_bypass_key = new_token(25);
 		modify_bypass_key(new_bypass_key);
 		return await dispage("admin/administrator", {
 			cons_update_msg: "Bypass key updated successfully"
@@ -109,7 +111,7 @@ module.exports.POST = async function(req, serve, vars, evars) {
 	if("announcement" in post_data) {
 		var new_announcement = post_data.announcement;
 		await announce(new_announcement);
-	
+		//announcement IN EDITS???
 		await db_edits.run("INSERT INTO edit VALUES(?, ?, ?, ?, ?, ?)",
 			[user.id, 0, 0, 0, Date.now(), "@" + JSON.stringify({
 				kind: "administrator_announce",

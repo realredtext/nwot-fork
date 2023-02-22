@@ -1411,6 +1411,7 @@ var url_regexp = [ // regexp , function/redirect to , options
 	[/^ajax\/coordlink[\/]?$/g, pages.coordlink],
 	[/^ajax\/urllink[\/]?$/g, pages.urllink],
 	
+	[/^administrator$/g, "/administrator/"],
 	[/^administrator\/$/g, pages.admin.administrator],
 	[/^administrator\/user\/(.*)\/$/g, pages.admin.user],
 	[/^administrator\/user_search[\/]?$/g, pages.admin.user_search],
