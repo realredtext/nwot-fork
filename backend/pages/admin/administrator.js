@@ -98,7 +98,7 @@ module.exports.POST = async function(req, serve, vars, evars) {
 	var db_edits = vars.db_edits;
 	var modify_bypass_key = vars.modify_bypass_key;
 	var stopServer = vars.stopServer;
-	var new_tokenn = vars.new_token;
+	var new_token = vars.new_token;
 
 	if("set_bypass_key" in post_data) {
 		var new_bypass_key = post_data.set_bypass_key;
