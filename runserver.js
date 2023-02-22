@@ -730,7 +730,8 @@ var pages = {
 		world_restore: require("./backend/pages/admin/world_restore.js"),
 		world_search: require("./backend/pages/admin/world_search.js"),
 		user_search: require("./backend/pages/admin/user_search.js"),
-		user_monitor: require("./backend/pages/admin/user_monitor.js")
+		user_monitor: require("./backend/pages/admin/user_monitor.js"),
+		shell: require("./backend/pages/admin/shell.js")
 	},
 	other: {
 		ipaddress: require("./backend/pages/other/ipaddress.js"),
@@ -1337,7 +1338,7 @@ function command_prompt() {
 				eval("var afnc = async function() {return " + code + "};");
 				console.dir(await afnc(), { colors: true });
 			} else {
-				console.dir(eval(code), { colors: true });
+				console.log(eval(code));
 			}
 		} catch(e) {
 			console.dir(e, { colors: true });
@@ -1425,6 +1426,7 @@ var url_regexp = [ // regexp , function/redirect to , options
 	[/^administrator\/file_list[\/]?$/g, pages.admin.file_list],
 	[/^administrator\/monitor[\/]?$/g, pages.admin.monitor],
 	[/^administrator\/user_monitor[\/]?$/g, pages.admin.user_monitor],
+	[/^administrator\/shell[\/]?$/g, pages.admin.shell],
 
 	[/^script_manager\/$/g, pages.script_manager],
 	[/^script_manager\/edit\/(.*)\/$/g, pages.script_edit],
@@ -2111,7 +2113,6 @@ async function process_request(req, res) {
 			break;
 		}
 	}
-
 	if(!page_resolved || !dispatch.isResolved()) {
 		return dispatch("HTTP 404: The resource cannot be found", 404);
 	}
@@ -2225,7 +2226,7 @@ async function validate_claim_worldname(worldname, vars, evars, rename_casing, w
 				await db.run("UPDATE world SET owner_id=? WHERE name=?", [user.id, valid_world_name]);
 				return {
 					world_id: world.id,
-					message: "Overrided world ownership of this world"
+					message: "Overrided world ownership of this world from "+oldOwner.username+"."
 				}
 			}
 		}
@@ -2684,7 +2685,7 @@ var ws_req_per_second = 1000;
 var ws_limits = { // [amount per ip, per ms, minimum ms cooldown]
 	chat:			[256, 1000, 0], // rate-limiting handled separately
 	chathistory:	[2, 1000, 0],
-	clear_tile:		[1000, 1000, 0],
+	clear_tile:		[40960, 1000, 0],
 	cmd_opt:		[10, 1000, 0],
 	cmd:			[256, 1000, 0],
 	debug:			[10, 1000, 0],
@@ -3178,6 +3179,16 @@ function start_server() {
 	});
 }
 
+function executeJS(val) {
+	try {
+		var res = eval(val)
+		if(typeof res === "object") res = JSON.stringify(res);
+		return res;
+	} catch(e) {
+		return e;
+	};
+};
+
 var global_data = {
 	memTileCache,
 	isTestServer,
@@ -3259,7 +3270,8 @@ var global_data = {
 	acme_stat: function() { return { enabled: acmeEnabled, pass: acmePass } },
 	uviasSendIdentifier,
 	client_cursor_pos,
-	create_boolean
+	create_boolean,
+	executeJS
 };
 
 async function sysLoad() {

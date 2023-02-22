@@ -36,7 +36,8 @@ module.exports.GET = async function(req, serve, vars, evars) {
 
 	// not a superuser nor owner
 	var is_owner = world.owner_id == user.id || user.superuser && world.name == "";
-	if(!(user.superuser || is_owner)) {
+	var allowed = user.superuser || is_owner;
+	if(!allowed) {
 		return await dispage("404", null, req, serve, vars, evars);
 	}
 
@@ -56,24 +57,14 @@ module.exports.GET = async function(req, serve, vars, evars) {
 
 	var groupSize = 2048;
 
-	serve.startStream();
-
 	// set up headers
-	serve(null, null, {
-		mime: "application/force-download; charset=utf-8",
-		download_file: filename_sanitize("World_" + world_name + ".json")
-	});
-
+	var test = "";
 	var groups = Math.ceil(count / groupSize);
-	var status = await serve.writeStream("[");
-	if(status) return; // socket aborted
 	var loopEnded = false;
 	for(var i = 0; i < groups; i++) {
 		var data = await db.all("SELECT * FROM tile WHERE world_id=? ORDER BY rowid LIMIT ?,?",
 			[world.id, i * groupSize, groupSize]);
 		if(!data || data.length == 0) {
-			var status = await serve.writeStream("]");
-			if(status) return; // socket aborted
 			loopEnded = true;
 			break;
 		}
@@ -91,13 +82,13 @@ module.exports.GET = async function(req, serve, vars, evars) {
 				created_at: tile.created_at
 			});
 		}
-		var status = await serve.writeStream(tileData);
-		if(status) return; // socket aborted
+		loopEnded = true;
+		test = "["+tileData+"]";
 	}
-	if(!loopEnded) {
-		var status = await serve.writeStream("]");
-		if(status) return; // socket aborted
-	}
-
-	serve.endStream();
+	
+	serve(test, null, {
+		mime: "application/json; charset=utf-8",
+		download_file: filename_sanitize("World_" + world_name + ".json")
+	});
+	
 }
