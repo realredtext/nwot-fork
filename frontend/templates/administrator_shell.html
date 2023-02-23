@@ -11,13 +11,15 @@
 
 {% block content %}
 	<div class="content_set">
-		<div class="content_set_title">Execute script</div>
+		<div class="content_set_title">Execute backend Javascript</div>
 		<div class="content_set_content">
 			<b>This page is WIP, do NOT expect stability!</b>
 			<form method="POST" action=".">
 				Run script: 
 				<input type="text" name="shell_script" value="" autocomplete="off">
 				<input type="submit" value="Run">
+				
+				<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrftoken }}">
 			</form>
 		</div>
 	</div>
