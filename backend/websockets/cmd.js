@@ -37,7 +37,6 @@ module.exports = async function(ws, data, send, vars, evars) {
 		sender: channel,
 		source: "cmd"
 	};
-	if(globalBroadcast && user.operator) cdata.globalBroadcast = globalBroadcast;
 
 	if(data.include_username && user.authenticated) {
 		var username = user.username;
