@@ -35,7 +35,8 @@
 			ajaxRequest({
 				type: "POST",
 				data: {
-					manage_server: command
+					manage_server: command,
+					csrftoken: document.querySelector("input[name='csrfmiddlewaretoken']").value
 				},
 				url: "/administrator/",
 				done: function(e) {
@@ -312,6 +313,7 @@
 			<button class="server_mgr" id="mgr_close"><img src="/static/close.png"><span class="server_mgr_txt">Close</span></button>
 			<br>
 			<button class="server_mgr" id="mgr_maintenance"><img src="/static/maintenance.png"><span class="server_mgr_txt">Maintenance</span></button>
+			<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrftoken }}">
 		</div>
 	</div>
 	{% endif %}

@@ -1,6 +1,8 @@
 module.exports.GET = async function(req, serve, vars, evars, params) {
 	var HTML = evars.HTML;
 	var user = evars.user;
+	
+	var csrftoken = evars.cookies.csrftoken;
 
 	var dispage = vars.dispage;
 	var db = vars.db;
@@ -83,7 +85,8 @@ module.exports.GET = async function(req, serve, vars, evars, params) {
 		monitor_num,
 		uMonitor_num,
 		bypass_key: get_bypass_key(),
-		custom_ranks
+		custom_ranks,
+		csrftoken
 	}
 
 	serve(HTML("administrator.html", data));
@@ -137,6 +140,9 @@ module.exports.POST = async function(req, serve, vars, evars) {
 	if("manage_server" in post_data) {
 		if(!user.operator) return;
 		var cmd = post_data.manage_server;
+		var postedCsrftoken = post_data.csrftoken;
+		if(postedCsrftoken !== evars.user.csrftoken) return;
+		
 		if(cmd == "restart") {
 			serve("SUCCESS");
 			stopServer(true);
