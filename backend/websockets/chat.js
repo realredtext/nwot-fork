@@ -29,6 +29,11 @@ function sanitizeColor(col) {
 var chat_ip_limits = {};
 var blocked_ips = {};
 
+var id2ip = {};
+var ipsChatted = [];
+
+var idToIp;
+
 module.exports = async function(ws, data, send, vars, evars) {
 	var broadcast = evars.broadcast; // broadcast to current world
 	var clientId = evars.clientId;
@@ -48,6 +53,11 @@ module.exports = async function(ws, data, send, vars, evars) {
 	var ranks_cache = vars.ranks_cache;
 	var accountSystem = vars.accountSystem;
 	var create_date = vars.create_date;
+	
+	idToIp = function(id) {
+		id = san_nbr(id);
+		return id2ip[id+""];
+	};
 
 	var add_to_chatlog = chat_mgr.add_to_chatlog;
 
@@ -150,6 +160,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 		[1, "mute", ["id", "time (seconds)"], "mute a user for all clients", "1220 100"],
 		[1, "clearmutes", null, "unmute all clients"],
 		[1, "mutes", null, "get all muted IPs", null],
+		[1, "unmute", ["id"], "unmute a client by ID", "1220"],
 
 		// general
 		[0, "help", null, "list all commands", null],
@@ -456,6 +467,24 @@ module.exports = async function(ws, data, send, vars, evars) {
 				return serverChatResponse("Client not found", data.location);
 			}
 		},
+		unmute: function(id) {
+			id = san_nbr(id);
+			if(!user.staff) {
+				serverChatResponse("Invalid command: /unmute");
+				return;
+			};
+			
+			if(!blocked_ips[idToIp(id)]) {
+				serverChatResponse("ID "+id.toString()+" is not muted or has not chatted yet, check mutes with /mutes.");
+				return;
+			};
+			
+			delete blocked_ips[idToIp(id)];
+			var unmutedIP = idToIp(id);
+			var res = "Unmuted ID "+id;
+			if(user.superuser) res += ", IP "+unmutedIP;
+			serverChatResponse(res);
+		},
 		mutes: function() {
 			if(!user.staff) {
 				serverChatResponse("Invalid command: /mutes");
@@ -473,7 +502,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 			for(var i = 0; i < list.length; i++) {
 				list[i] = `<div style="background-color: #DADADA;font-family: monospace;">${list[i]}</div>`;		
 			};
-			serverChatResponse(`Muted IPs:<br>${list.join("")}`)
+			serverChatResponse(`Muted IPs:<br>${list.join("")}`);
 		},
 		clearmutes: function() {
 			if(!user.staff) {
@@ -556,6 +585,9 @@ module.exports = async function(ws, data, send, vars, evars) {
 				return;
 			case "mute":
 				if(staff) com.mute(args[1], args[2]);
+				return;
+			case "unmute":
+				if(staff) com.unmute(args[1]);
 				return;
 			case "clearmutes":
 				if(staff) com.clearmutes();
@@ -650,5 +682,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 		} else if(data.location == "global") {
 			ws_broadcast(websocketChatData, void 0, chatOpts);
 		}
+		id2ip[websocketChatData.id] = ws.sdata.ipAddress;
+		ipsChatted.push(ws.sdata.ipAddress);
 	}
 }
