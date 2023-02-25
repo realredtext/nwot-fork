@@ -148,9 +148,6 @@ module.exports = async function(ws, data, send, vars, evars) {
 
 	// [rank, name, args, description, example]
 	var command_list = [
-		// operator
-		[3, "uptime", null, "get uptime of server", null],
-
 		// superuser
 		[2, "worlds", null, "list most 1000 active worlds", null],
 		[2, "users", null, "shows all the users on your world", null],
@@ -164,6 +161,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 
 		// general
 		[0, "help", null, "list all commands", null],
+		[0, "uptime", null, "get uptime of server", null],
 		[0, "passive", null, "toggle server messages on or off", null],
 		[0, "nick", ["nickname"], "change your nickname", "JohnDoe"], // client-side
 		[0, "ping", null, "check the latency", null],
@@ -528,7 +526,9 @@ module.exports = async function(ws, data, send, vars, evars) {
 					user_login = user_disp;
 				}
 			}
-			idstr += "Login username: " + user_login + "<br>";
+			if(accountSystem === "uvias") {
+				idstr += "Login username: " + user_login + "<br>";
+			};
 			idstr += "Display username: " + user_disp + "<br>";
 			idstr += "Chat ID: " + clientId;
 			return serverChatResponse(idstr, data.location);

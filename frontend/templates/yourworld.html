@@ -8,7 +8,7 @@
 		{% if meta_desc %}<meta name="description" content="{{meta_desc}}">{% else %}<meta name="description" content="An infinite grid of text editable by anyone. This is a recreation of YourWorldOfText from scratch.">{% endif %}
 		<meta property="og:image" content="/static/logo.png">
 		<link type="text/css" rel="stylesheet" href="/static/css/yourworld.css">
-		{% for script in user.scripts %}<script src="/script_manager/view/{{ script.name }}/"></script>{% endfor %}
+		{% for script in user.scripts %}<script src="/script_manager/view/{{ script.name }}/" defer></script>{% endfor %}
 	</head>
 	<body>
 		<div id="main_view">
@@ -185,5 +185,8 @@
 		<script src="/static/yw/javascript/permissions.js"></script>
 		<script src="/static/yw/javascript/chat.js"></script>
 		<script src="/static/yw/javascript/owot.js"></script>
+		{% if user.superuser %}
+		<script src="/static/yw/javascript/world_tools.js"></script>
+		{% endif %}
 	</body>
 </html>

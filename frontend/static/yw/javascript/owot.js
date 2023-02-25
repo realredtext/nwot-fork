@@ -5202,10 +5202,6 @@ buildMenu();
 w.regionSelect.onselection(handleRegionSelection);
 w.regionSelect.init();
 
-if(state.userModel.is_superuser) {
-	w.loadScript("/static/yw/javascript/world_tools.js");
-}
-
 if(state.background) {
 	w.backgroundInfo.x = ("x" in state.background) ? state.background.x : 0;
 	w.backgroundInfo.y = ("y" in state.background) ? state.background.y : 0;
@@ -5549,16 +5545,7 @@ var ws_functions = {
 	error: function(data) {
 		var code = data.code;
 		var message = data.message;
-		switch(code) {
-			case "CONN_LIMIT": // too many connections
-			case "INVALID_ADDR": // invalid websocket path
-			case "NO_EXIST": // world does not exist
-			case "NO_PERM": // no permission to access world
-				console.log("Received error from the server with code [" + code + "]: " + message);
-				break;
-			case "PARAM": // invalid parameters in message
-				break;
-		}
+		console.log("Received error from server with code ["+code+"]: "+message);
 	}
 };
 

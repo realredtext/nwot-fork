@@ -7,10 +7,9 @@
 		<link rel="shortcut icon" type="image/png" href="/static/favicon.png"/>
 		<link rel="stylesheet" type="text/css" href="/static/css/site.css">
 		<link rel="shortcut icon" href="/static/favicon.png">
-		{% block endhead %}{% endblock %}
-		{% for script in user.scripts %}
-			<script src="/script_manager/view/{{ script.name }}/"></script>
-		{% endfor %}
+		{% block endhead %}
+		{% for script in user.scripts %}<script src="/script_manager/view/{{ script.name }}/"></script>{% endfor %}
+		{% endblock %}
 	</head>
 	<body>
 		<div class="container">
