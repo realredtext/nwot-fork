@@ -100,7 +100,7 @@ function api_chat_send(message, opts) {
 		}
 	}
 	
-	message = message.replace(/\$nick/g, YourWorld.Nickname)
+	message = message.replace(/\$nick(name)?/g, YourWorld.Nickname)
 					.replace(/\$color/g, "#"+YourWorld.Color.toString(16))
 					.replace(/\$chatcolor/g, "#"+(localStorage.getItem("chatcolor")*1).toString(16))
 					.replace(/\$xcoord/g, positionX/(-tileW)/coordSizeX)
@@ -182,6 +182,38 @@ var client_commands = {
 		ws_path = createWsPath();
 		w.changeSocket(ws_path);
 		clientChatResponse("Switching to world: \"" + address + "\"");
+		
+		asArray(elm.page_chatfield.children).forEach(msg => {msg.remove()});
+		
+		setTimeout(network.chathistory, 1500);
+	},
+	shortcuts: function() {
+		var shortcutList = [
+			["$xcoord", "current X position"],
+			["$ycoord", "current Y position"],
+			["$id", "client ID"],
+			["$username", "username"],
+			["$channel", "socket channel"],
+			["$nickname", "nickname"],
+			["$chatcolor", "chat color"],
+			["$color", "canvas color"]
+		];
+		
+		var res = [];
+		for(var index in shortcutList) {
+			var shortcut = shortcutList[index];
+			
+			var formatted = "";
+			if(index % 2 === 1) {
+				formatted = "<div style=\"background-color: #C3C3C3\">" +shortcut[0]+" => "+shortcut[1]+ "</div>";
+			} else {
+				formatted = "<div style=\"background-color: #DADADA\">" +shortcut[0]+" => "+shortcut[1]+ "</div>"
+			};
+			
+			res.push(formatted);
+		};
+		
+		addChat(null, 0, "user", "[ Client ]", "Chat Shortcuts:<br><div style=\"background-color: #DADADA; font-family: monospace; font-size: 13px;\">"+res.join("")+"</div>", "Client", 1, 1, 1, "#0000FF", Date.now());
 	},
 	warpserver: function(args) {
 		var address = args[0];

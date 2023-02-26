@@ -132,6 +132,10 @@ function ajaxRequest(settings) {
 	}
 }
 
+function asArray(i) {
+    return [...i];
+}
+
 function removeAlpha(data) {
 	var res = [];
 	var len = data.length / 4;

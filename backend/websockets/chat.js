@@ -179,7 +179,8 @@ module.exports = async function(ws, data, send, vars, evars) {
 		[0, "night", null, "enable night mode", null], // client-side
 		[0, "day", null, "disable night mode", null], // client-side
 		[0, "tell", ["id", "message"], "tell someone a secret message", "1220 The coordinates are (392, 392)"],
-		[0, "whoami", null, "display your identity"]
+		[0, "whoami", null, "display your identity"],
+		[0, "shortcuts", null, "list all chat shorthands", null] //client-side
 
 		// hidden by default
 		// "/search Phrase" (client) -> searches for Phrase within a 25 tile radius
