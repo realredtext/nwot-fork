@@ -27,31 +27,28 @@ module.exports.POST = async function(req, serve, vars, evars) {
 	var searchQuery = post_data.search_query;
 	var worldCount = 0;
 	
-	if(searchQuery.length < 1 || ! (/^([\w\/\.\-]*)$/g.test(searchQuery))) {
+	if(searchQuery.length < 1 || ! (/^([\w\/\.\-\~]*)$/g.test(searchQuery))) {
 		return await dispage("admin/world_search", {
 			message: "Invalid search query"
 		}, req, serve, vars, evars);
-	} else {
-		var worlds = await db.all("SELECT * FROM world");
-		var worldsWithQuery = [];
+	};
+	
+	var worlds = await db.all("SELECT name, properties FROM world WHERE name LIKE ? || '%' ORDER BY name", searchQuery);
 		
-		for(var i in worlds) {
-			if(worlds[i].name.includes(searchQuery)) {
-				worlds[i].properties = JSON.parse(worlds[i].properties);
-				worlds[i].views = (worlds[i].properties.views ?? 0).toString();
-				worldsWithQuery.push(worlds[i]);
-				worldCount++
-			};
-		};
-		if(worldCount === 0 && worldsWithQuery.length === 0) {
-			return await dispage("admin/world_search", {
-				message: "No worlds with query \""+searchQuery+"\" were found."
-			}, req, serve, vars, evars)
-		} else {
-			return await dispage("admin/world_search", {
-				message: worldCount+" worlds found",
-				worlds: worldsWithQuery
-			}, req, serve, vars, evars);
-		}
+	for(var world of worlds) {
+		world.properties = JSON.parse(world.properties);
+		world.views = (world.properties.views ?? 0).toString();
+		worldCount++;
+	};
+	
+	if(worldCount === 0) {
+		return await dispage("admin/world_search", {
+			message: "No worlds with query \""+searchQuery+"\" were found."
+		}, req, serve, vars, evars)
+	} else {
+		return await dispage("admin/world_search", {
+			message: worldCount+" worlds found",
+			worlds: worlds
+		}, req, serve, vars, evars);
 	};
 };
