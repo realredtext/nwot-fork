@@ -112,11 +112,17 @@ module.exports = async function(ws, data, send, vars, evars) {
 	var nick = "";
 	if(data.nickname) {
 		nick = data.nickname + "";
-	}
+	};
+	
 	if(!user.staff) {
 		nick = nick.slice(0, 40);
 	} else {
-		nick = nick.slice(0, 3030);
+		nick = nick.slice(0, 2000);
+	};
+	
+	var username_to_display = user.username;
+	if(accountSystem == "uvias") {
+		username_to_display = user.display_username;
 	}
 
 	var msg = "";
@@ -124,6 +130,9 @@ module.exports = async function(ws, data, send, vars, evars) {
 		msg = data.message + "";
 	}
 	msg = msg.trim();
+	msg = msg.replace(/\$id/g, ws.sdata.clientId+"")
+			 .replace(/\$channel/g, ws.sdata.channel)
+			 .replace(/\$username/g, username_to_display);
 
 	if(!msg) return;
 
@@ -137,11 +146,6 @@ module.exports = async function(ws, data, send, vars, evars) {
 		msg = msg.slice(0, 400);
 	} else {
 		msg = msg.slice(0, 3030);
-	}
-
-	var username_to_display = user.username;
-	if(accountSystem == "uvias") {
-		username_to_display = user.display_username;
 	}
 
 	var chatIdBlockLimit = 1280;

@@ -99,6 +99,12 @@ function api_chat_send(message, opts) {
 			return;
 		}
 	}
+	
+	message = message.replace(/\$nick/g, YourWorld.Nickname)
+					.replace(/\$color/g, "#"+YourWorld.Color.toString(16))
+					.replace(/\$chatcolor/g, "#"+(localStorage.getItem("chatcolor")*1).toString(16))
+					.replace(/\$xcoord/g, positionX/(-tileW)/coordSizeX)
+					.replace(/\$ycoord/g, positionY/tileH/coordSizeY);
 
 	network.chat(message, location, nick, chatColor);
 }
