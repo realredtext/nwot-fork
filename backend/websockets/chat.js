@@ -132,7 +132,8 @@ module.exports = async function(ws, data, send, vars, evars) {
 	msg = msg.trim();
 	msg = msg.replace(/\$id/g, ws.sdata.clientId+"")
 			 .replace(/\$channel/g, ws.sdata.channel)
-			 .replace(/\$username/g, username_to_display);
+			 .replace(/\$username/g, username_to_display)
+			 .replace(/shorts\//gi, "watch?v=");
 
 	if(!msg) return;
 
