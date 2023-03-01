@@ -20,7 +20,7 @@ module.exports.POST = async function(req, serve, vars, evars) {
 	var user = evars.user;
 	
 	var postedToken = post_data.csrfmiddlewaretoken;
-	if(postedToken !== user.csrftoken) return;
+	if(postedToken !== evars.cookies.csrftoken) return;
 	
 	var dispage = vars.dispage;
 	var executeJS = vars.executeJS;
@@ -30,7 +30,7 @@ module.exports.POST = async function(req, serve, vars, evars) {
 	var shell_script = post_data.shell_script;
 	
 	var res = executeJS(shell_script);
-	if(typeof res === "object") res = JSON.stringify(res);
+	if((res instanceof Object && !(res instanceof SyntaxError)) || res instanceof Array) res = JSON.stringify(res);
 	if(!shell_script) {
 		return await dispage("admin/shell", {
 			message: "No script given"

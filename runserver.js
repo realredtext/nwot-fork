@@ -305,6 +305,7 @@ var filesPath      = settings.FILES_PATH;
 var staticFilesRaw = settings.STATIC_FILES_RAW;
 var staticFilesIdx = settings.STATIC_FILES_IDX;
 var accountSystem  = settings.accountSystem; // "uvias" or "local"
+var blocked_ips    = settings.BLOCKED_IP_PATH;
 
 var loginPath = "/accounts/login/";
 var logoutPath = "/accounts/logout/";
@@ -442,25 +443,24 @@ var read_staticRaw,
 	read_staticIdx,
 	write_staticIdx,
 	staticRaw_size,
+	blocked_ip_list,
 	staticIdx_size;
 function initializeStaticSys() {
 	if(!fs.existsSync(settings.bypass_key)) {
-		var rand = "";
-		var key = "0123456789ABCDEF";
-		for(var i = 0; i < 50; i++) {
-			rand += key[Math.floor(Math.random() * 16)];
-		}
+		crypto.randomBytes(25).toString("hex");
 		fs.writeFileSync(settings.bypass_key, rand);
 	}
 	
 	if(!fs.existsSync(filesPath)) fs.mkdirSync(filesPath, 0o777);
 	if(!fs.existsSync(staticFilesRaw)) fs.writeFileSync(staticFilesRaw, "");
 	if(!fs.existsSync(staticFilesIdx)) fs.writeFileSync(staticFilesIdx, "");
+	if(!fs.existsSync(blocked_ips)) fs.writeFileSync(blocked_ips, "{}");
 	
 	read_staticRaw = fs.openSync(staticFilesRaw, "r");
 	write_staticRaw = fs.createWriteStream(staticFilesRaw, { flags: "a" });
 	read_staticIdx = fs.openSync(staticFilesIdx, "r");
 	write_staticIdx = fs.createWriteStream(staticFilesIdx, { flags: "a" });
+	blocked_ip_list = JSON.parse(fs.readFileSync(settings.BLOCKED_IP_PATH), "utf8");
 	
 	staticRaw_size = fs.statSync(staticFilesRaw).size;
 	staticIdx_size = fs.statSync(staticFilesIdx).size;
@@ -475,6 +475,31 @@ async function staticRaw_append(data) {
 			res(start);
 		});
 	});
+}
+
+function blockIPAddress(addr, reason, worlds /*array*/) {
+	if(worlds instanceof Array && worlds.map(e => /^([\w\.\-\~\/]*)$/g.test(e)).includes(false)) {
+		throw new SyntaxError("1 or more worlds is invalid!");
+	};
+	
+	if(!worlds) worlds = "*"; //universal block
+	if(!addr) return;
+	if(!reason) reason = "none given";
+		
+	blocked_ip_list[addr] = {
+		worlds,
+		reason
+	};
+	
+	fs.writeFileSync(settings.BLOCKED_IP_PATH, JSON.stringify(blocked_ip_list));
+};
+
+function unblockIPAddress(addr) {
+	if(blocked_ip_list[addr]) {
+		delete blocked_ip_list[addr];
+		
+		fs.writeFileSync(settings.BLOCKED_IP_PATH, JSON.stringify(blocked_ip_list));
+	};
 }
 
 async function staticIdx_append(data) {
@@ -731,7 +756,8 @@ var pages = {
 		world_search: require("./backend/pages/admin/world_search.js"),
 		user_search: require("./backend/pages/admin/user_search.js"),
 		user_monitor: require("./backend/pages/admin/user_monitor.js"),
-		shell: require("./backend/pages/admin/shell.js")
+		shell: require("./backend/pages/admin/shell.js"),
+		ip_restrictions: require("./backend/pages/admin/ip_restrictions.js")
 	},
 	other: {
 		ipaddress: require("./backend/pages/other/ipaddress.js"),
@@ -1428,6 +1454,7 @@ var url_regexp = [ // regexp , function/redirect to , options
 	[/^administrator\/monitor[\/]?$/g, pages.admin.monitor],
 	[/^administrator\/user_monitor[\/]?$/g, pages.admin.user_monitor],
 	[/^administrator\/shell[\/]?$/g, pages.admin.shell],
+	[/^administrator\/ip_restrictions[\/]?$/g, pages.admin.ip_restrictions],
 
 	[/^script_manager\/$/g, pages.script_manager],
 	[/^script_manager\/edit\/(.*)\/$/g, pages.script_edit],
@@ -2016,12 +2043,22 @@ async function process_request(req, res) {
 	var cfIp = req.headers["CF-Connecting-IP"] || req.headers["cf-connecting-ip"];
 	var remIp = req.socket.remoteAddress;
 	var ipAddress = evaluateIpAddress(remIp, realIp, cfIp)[0];
+	
+	var restr = blocked_ip_list[ipAddress];
 
 	var dispatch = createDispatcher({
 		res,
 		encoding: acceptEncoding,
 		gzip: gzipEnabled
 	});
+	
+	if(restr) {
+		var restrictedWorlds = restr.worlds;
+		if(restrictedWorlds === "*" || restrictedWorlds.includes(URL)) {
+			return dispatch("Disallowed, reason: "+restr.reason, 403);
+			res.end();
+		};
+	};
 
 	var page_resolved = false;
 	for(var i in url_regexp) {
@@ -2689,7 +2726,6 @@ var ws_limits = { // [amount per ip, per ms, minimum ms cooldown]
 	clear_tile:		[40960, 1000, 0],
 	cmd_opt:		[10, 1000, 0],
 	cmd:			[256, 1000, 0],
-	debug:			[10, 1000, 0],
 	fetch:			[256, 1000, 0],
 	link:			[400, 1000, 0],
 	protect:		[400, 1000, 0],
@@ -2795,6 +2831,16 @@ async function manageWebsocketConnection(ws, req) {
 	var evalIp = evaluateIpAddress(remIp, realIp, cfIp);
 	ws.sdata.ipAddress = evalIp[0];
 	ws.sdata.ipAddressFam = evalIp[1];
+	
+	var restr = blocked_ip_list[ws.sdata.ipAddress];
+	
+	if(restr) {
+		var socketPath = url.parse(req.url).pathname;
+		var worldPath = socketPath.slice(1).substr(0, socketPath.length - 4);
+		if(restr.worlds === "*" || restr.worlds.includes(worldPath)) {
+			ws.close();
+		};
+	};
 
 	// must be at the top before any async calls (errors would occur before this event declaration)
 	ws.on("error", function(err) {
@@ -3252,6 +3298,9 @@ var global_data = {
 	WebSocket,
 	fixColors,
 	sanitize_color,
+	blockIPAddress,
+	unblockIPAddress,
+	blocked_ip_list,
 	worldViews: {},
 	ranks_cache,
 	static_data,
