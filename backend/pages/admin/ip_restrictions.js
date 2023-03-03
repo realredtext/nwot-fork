@@ -8,12 +8,12 @@ function validIP(ip, fam) {
         if(ip.split(".").length < 4) return false;
         if((ip.split(".").map(Number).filter(e => e > 255 || e < 0)).length) return false;
 
-        return !(/[^\d\.\/]/g.test(ip));
+        return !(/[^1234567890\.\/]/g.test(ip));
     } else {
         if(ip.split(":").length < 8) return false;
-        if(ip.split(":").map(e => parseInt(e, 16)).filter(e => e > 0xffff || e < 0)) return false;
+        if(ip.split(":").map(e => parseInt(e, 16)).filter(e => e > 0xffff || e < 0).length) return false;
 
-        return !(/[^\d,abcdef\:\/]/g.test(ip));
+        return !(/[^1234567890abcdef\:\/]/gim.test(ip));
     };
 };
 
@@ -53,6 +53,7 @@ module.exports.POST = async function(req, serve, vars, evars) {
 	
 	var post_type = post_data.post_type;
 	var ip_addr = post_data.ip_addr;
+	var ipFam = ip_addr.includes(":")?6:4;
 	
 	if(post_type === "block_ip") {
 		var reason = post_data.reason || "none given";
@@ -60,7 +61,8 @@ module.exports.POST = async function(req, serve, vars, evars) {
 			block_message: "No IP given",
 			csrftoken: evars.cookies.csrftoken
 		}, req, serve, vars, evars);
-		if(!validIP(ip_addr)) return await dispage("admin/ip_restrictions", {
+		
+		if(!validIP(ip_addr, ipFam)) return await dispage("admin/ip_restrictions", {
 			block_message: "Invalid IP address",
 			csrftoken: evars.cookies.csrftoken
 		}, req, serve, vars, evars);
@@ -91,6 +93,11 @@ module.exports.POST = async function(req, serve, vars, evars) {
 	} else {
 		if(!ip_addr) return await dispage("admin/ip_restrictions", {
 			unblock_message: "No IP given",
+			csrftoken: evars.cookies.csrftoken
+		}, req, serve, vars, evars);
+		
+		if(!blocked_ip_list[ip_addr+""]) return await dispage("admin/ip_restrictions", {
+			unblock_message: "This IP is not blocked",
 			csrftoken: evars.cookies.csrftoken
 		}, req, serve, vars, evars);
 		
