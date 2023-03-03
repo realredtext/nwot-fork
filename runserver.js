@@ -172,6 +172,25 @@ function ipv4_txt_to_int() {
 	}
 }
 
+function validIP(ip, fam=4) {
+    ip = ip.toLowerCase();
+    if(![4, 6].includes(fam)) return false;
+
+    if(ip.length < 7) return false;
+
+    if(fam === 4) {
+        if(ip.split(".").length < 4) return false;
+        if((ip.split(".").map(Number).filter(e => e > 255 || e < 0)).length) return false;
+
+        return !(/[^\d\.\/]/g.test(ip));
+    } else {
+        if(ip.split(":").length < 8) return false;
+        if((ip.split(":").map(e => parseInt(e, 16)).filter(e => e > 0xffff || e < 0)).length) return false;
+
+        return !(/[^\d,abcdef\:\/]/g.test(ip));
+    };
+}
+
 function ipv6_txt_to_int() {
 	var txt = cloudflare_ipv6_txt;
 	txt = txt.replace(/\r\n/g, "\n");
@@ -2052,7 +2071,7 @@ async function process_request(req, res) {
 		gzip: gzipEnabled
 	});
 	
-	if(restr) {
+	if(restr && !URL.startsWith("static/")) {
 		var restrictedWorlds = restr.worlds;
 		if(restrictedWorlds === "*" || restrictedWorlds.includes(URL)) {
 			return dispatch("Disallowed, reason: "+restr.reason, 403);
