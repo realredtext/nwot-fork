@@ -148,7 +148,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 	} else {
 		msg = msg.slice(0, 3030);
 	}
-
+	
 	var chatIdBlockLimit = 1280;
 
 	// [rank, name, args, description, example]
@@ -156,6 +156,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 		// superuser
 		[2, "worlds", null, "list most 1000 active worlds", null],
 		[2, "users", null, "shows all the users on your world", null],
+		[2, "getip", ["id"], "get IP by ID", "1220"],
 
 		// staff
 		[1, "channel", null, "get info about a chat channel"],
@@ -282,7 +283,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 		},
 		users: function() {
 			if(!user.superuser) {
-				serverChatResponse("Invalide command: /users");
+				serverChatResponse("Invalid command: /users");
 				return;
 			}
 		    var list = [];
@@ -295,6 +296,26 @@ module.exports = async function(ws, data, send, vars, evars) {
 			});
 			
 			serverChatResponse("Users on "+"/"+evars.world.name+":<br>"+list.join(""));
+		},
+		getip: function(id) {
+			if(!user.superuser) {
+				serverChatResponse("Invalid command: /getip");
+				return;
+			};
+			id = san_nbr(id);
+			if(id < 0) return;
+			
+			var res = {};
+			
+			wss.clients.forEach((cli) => {
+				if(!cli.sdata.userClient) return;
+				if(cli.sdata.clientId === id) {
+					res.ip = cli.sdata.ipAddress;
+					if(ws.sdata.world.name !== cli.sdata.world.name) res.world = cli.sdata.world.name;
+				};
+			});
+			
+			serverChatResponse(`IP of ID ${id}${res.world?` (on world /${res.world})`:``}: ${res.ip}`);
 		},
 		passive: function() {
 			ws.sdata.blockServerChats = !ws.sdata.blockServerChats;
@@ -597,6 +618,9 @@ module.exports = async function(ws, data, send, vars, evars) {
 				return;
 			case "clearmutes":
 				if(staff) com.clearmutes();
+				return;
+			case "getip":
+				if(superuser) com.getip(args[1]);
 				return;
 			case "whoami":
 				com.whoami();
