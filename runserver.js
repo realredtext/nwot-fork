@@ -484,6 +484,7 @@ function initializeStaticSys() {
 	write_staticIdx = fs.createWriteStream(staticFilesIdx, { flags: "a" });
 	blocked_ip_list = JSON.parse(fs.readFileSync(settings.BLOCKED_IP_PATH), "utf8");
 	blocked_phrase_list = fs.readFileSync(settings.BLOCKED_PHRASE_PATH, "utf8").split("\n");
+	if(!blocked_phrase_list.join("")) blocked_phrase_list = [""];
 	
 	staticRaw_size = fs.statSync(staticFilesRaw).size;
 	staticIdx_size = fs.statSync(staticFilesIdx).size;
@@ -535,6 +536,8 @@ function unblockIPAddress(addr) {
 
 function setBlockedPhrases(array) {
 	if(!(array instanceof Array)) throw new TypeError("Provided list is not an array!");
+	if(!array) throw new TypeError("No list provided!");
+	if(array.length === 0) throw new RangeError("Provided list is empty!");
 	
 	blocked_phrase_list = array;
 	fs.writeFileSync(settings.BLOCKED_PHRASE_PATH, blocked_phrase_list.join("\n"));
@@ -794,7 +797,8 @@ var pages = {
 		user_search: require("./backend/pages/admin/user_search.js"),
 		user_monitor: require("./backend/pages/admin/user_monitor.js"),
 		shell: require("./backend/pages/admin/shell.js"),
-		ip_restrictions: require("./backend/pages/admin/ip_restrictions.js")
+		ip_restrictions: require("./backend/pages/admin/ip_restrictions.js"),
+		chat_filter: require("./backend/pages/admin/chat_filter.js")
 	},
 	other: {
 		ipaddress: require("./backend/pages/other/ipaddress.js"),
@@ -1492,6 +1496,7 @@ var url_regexp = [ // regexp , function/redirect to , options
 	[/^administrator\/user_monitor[\/]?$/g, pages.admin.user_monitor],
 	[/^administrator\/shell[\/]?$/g, pages.admin.shell],
 	[/^administrator\/ip_restrictions[\/]?$/g, pages.admin.ip_restrictions],
+	[/^administrator\/chat_filter[\/]?$/g, pages.admin.chat_filter],
 
 	[/^script_manager\/$/g, pages.script_manager],
 	[/^script_manager\/edit\/(.*)\/$/g, pages.script_edit],
