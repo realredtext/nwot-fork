@@ -26,6 +26,18 @@ function sanitizeColor(col) {
 	return "#00FF00"; // checking did not pass
 }
 
+function includesAnyOf(string, list) {
+	if(!list) return false;
+	
+	for(var member of list) {
+		if(string.includes(member)) {
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 var chat_ip_limits = {};
 var blocked_ips = {};
 
@@ -53,6 +65,10 @@ module.exports = async function(ws, data, send, vars, evars) {
 	var ranks_cache = vars.ranks_cache;
 	var accountSystem = vars.accountSystem;
 	var create_date = vars.create_date;
+	var blocked_phrase_list = vars.blocked_phrase_list;
+	if(blocked_phrase_list.length === 1 && blocked_phrase_list[0] === "") {
+		blocked_phrase_list = []; //dont want EVERY message to be blocked
+	};
 	
 	idToIp = function(id) {
 		id = san_nbr(id);
@@ -148,6 +164,23 @@ module.exports = async function(ws, data, send, vars, evars) {
 	} else {
 		msg = msg.slice(0, 3030);
 	}
+	
+	if(includesAnyOf(msg, blocked_phrase_list)) {
+		send({
+			nickname: data.nickname,
+			realUsername: username_to_display,
+			id: ws.sdata.clientId,
+			message: msg,
+			registered: user.authenticated,
+			location: data.location,
+			op: user.operator,
+			admin: user.superuser,
+			staff: user.staff,
+			color: data.color,
+			kind: "chat"
+		});
+		return;
+	};
 	
 	var chatIdBlockLimit = 1280;
 

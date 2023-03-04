@@ -55,6 +55,7 @@
 	"TEST_CHAT_HISTORY_PATH": "../data/test/test_chat_history.sqlite",
 	
 	"BLOCKED_IP_PATH": "../data/blocked_ips.json",
+	"BLOCKED_PHRASE_PATH": "../data/blocked_phrases.txt",
 
 	"bypass_key": "../data/bypass_key.txt",
 

@@ -125,6 +125,25 @@ function normalize_ipv6(ip) {
 	return ip.join(":");
 }
 
+function validIP(ip, fam) {
+    ip = ip.toLowerCase();
+    if(![4, 6].includes(fam)) return false;
+
+    if(ip.length < 7) return false;
+
+    if(fam === 4) {
+        if(ip.split(".").length < 4) return false;
+        if((ip.split(".").map(Number).filter(e => e > 255 || e < 0)).length) return false;
+
+        return !(/[^1234567890\.\/]/g.test(ip));
+    } else {
+        if(ip.split(":").length < 8) return false;
+        if(ip.split(":").map(e => parseInt(e, 16)).filter(e => e > 0xffff || e < 0).length) return false;
+
+        return !(/[^1234567890abcdef\:\/]/gim.test(ip));
+    };
+}
+
 var cloudflare_ipv4_txt,
 	cloudflare_ipv6_txt;
 function loadCloudflareIpRanges() {
@@ -170,25 +189,6 @@ function ipv4_txt_to_int() {
 
 		cloudflare_ipv4_int.push([ip_start, ip_end]);
 	}
-}
-
-function validIP(ip, fam=4) {
-    ip = ip.toLowerCase();
-    if(![4, 6].includes(fam)) return false;
-
-    if(ip.length < 7) return false;
-
-    if(fam === 4) {
-        if(ip.split(".").length < 4) return false;
-        if((ip.split(".").map(Number).filter(e => e > 255 || e < 0)).length) return false;
-
-        return !(/[^\d\.\/]/g.test(ip));
-    } else {
-        if(ip.split(":").length < 8) return false;
-        if((ip.split(":").map(e => parseInt(e, 16)).filter(e => e > 0xffff || e < 0)).length) return false;
-
-        return !(/[^\d,abcdef\:\/]/g.test(ip));
-    };
 }
 
 function ipv6_txt_to_int() {
@@ -314,17 +314,18 @@ function run(path) {
 
 const settings = require(SETTINGS_PATH);
 
-var serverPort     = settings.port;
-var serverDB       = settings.DATABASE_PATH;
-var editsDB        = settings.EDITS_PATH;
-var chatDB         = settings.CHAT_HISTORY_PATH;
-var imageDB        = settings.IMAGES_PATH;
-var miscDB         = settings.MISC_PATH;
-var filesPath      = settings.FILES_PATH;
-var staticFilesRaw = settings.STATIC_FILES_RAW;
-var staticFilesIdx = settings.STATIC_FILES_IDX;
-var accountSystem  = settings.accountSystem; // "uvias" or "local"
-var blocked_ips    = settings.BLOCKED_IP_PATH;
+var serverPort      = settings.port;
+var serverDB        = settings.DATABASE_PATH;
+var editsDB         = settings.EDITS_PATH;
+var chatDB          = settings.CHAT_HISTORY_PATH;
+var imageDB         = settings.IMAGES_PATH;
+var miscDB          = settings.MISC_PATH;
+var filesPath       = settings.FILES_PATH;
+var staticFilesRaw  = settings.STATIC_FILES_RAW;
+var staticFilesIdx  = settings.STATIC_FILES_IDX;
+var accountSystem   = settings.accountSystem; // "uvias" or "local"
+var blocked_ips     = settings.BLOCKED_IP_PATH;
+var blocked_phrases = settings.BLOCKED_PHRASE_PATH;
 
 var loginPath = "/accounts/login/";
 var logoutPath = "/accounts/logout/";
@@ -463,6 +464,7 @@ var read_staticRaw,
 	write_staticIdx,
 	staticRaw_size,
 	blocked_ip_list,
+	blocked_phrase_list,
 	staticIdx_size;
 function initializeStaticSys() {
 	if(!fs.existsSync(settings.bypass_key)) {
@@ -474,12 +476,14 @@ function initializeStaticSys() {
 	if(!fs.existsSync(staticFilesRaw)) fs.writeFileSync(staticFilesRaw, "");
 	if(!fs.existsSync(staticFilesIdx)) fs.writeFileSync(staticFilesIdx, "");
 	if(!fs.existsSync(blocked_ips)) fs.writeFileSync(blocked_ips, "{}");
+	if(!fs.existsSync(blocked_phrases)) fs.writeFileSync(settings.BLOCKED_PHRASE_PATH, "");
 	
 	read_staticRaw = fs.openSync(staticFilesRaw, "r");
 	write_staticRaw = fs.createWriteStream(staticFilesRaw, { flags: "a" });
 	read_staticIdx = fs.openSync(staticFilesIdx, "r");
 	write_staticIdx = fs.createWriteStream(staticFilesIdx, { flags: "a" });
 	blocked_ip_list = JSON.parse(fs.readFileSync(settings.BLOCKED_IP_PATH), "utf8");
+	blocked_phrase_list = fs.readFileSync(settings.BLOCKED_PHRASE_PATH, "utf8").split("\n");
 	
 	staticRaw_size = fs.statSync(staticFilesRaw).size;
 	staticIdx_size = fs.statSync(staticFilesIdx).size;
@@ -501,6 +505,10 @@ function blockIPAddress(addr, reason, worlds /*array*/) {
 		throw new SyntaxError("1 or more worlds is invalid!");
 	};
 	
+	var addrFam = addr.includes(":")?6:4;
+	
+	if(!validIP(addr, addrFam)) return;
+	
 	if(!worlds) worlds = "*"; //universal block
 	if(!addr) return;
 	if(!reason) reason = "none given";
@@ -510,7 +518,11 @@ function blockIPAddress(addr, reason, worlds /*array*/) {
 		reason
 	};
 	
+	var blockedFrom = "*";
+	if(worlds instanceof Array) blockedFrom = worlds.join(", ");
+	
 	fs.writeFileSync(settings.BLOCKED_IP_PATH, JSON.stringify(blocked_ip_list));
+	console.log(`Blocked ${addr} from ${blockedFrom}, reason: ${reason}`);
 };
 
 function unblockIPAddress(addr) {
@@ -519,7 +531,14 @@ function unblockIPAddress(addr) {
 		
 		fs.writeFileSync(settings.BLOCKED_IP_PATH, JSON.stringify(blocked_ip_list));
 	};
-}
+};
+
+function setBlockedPhrases(array) {
+	if(!(array instanceof Array)) throw new TypeError("Provided list is not an array!");
+	
+	blocked_phrase_list = array;
+	fs.writeFileSync(settings.BLOCKED_PHRASE_PATH, blocked_phrase_list.join("\n"));
+};
 
 async function staticIdx_append(data) {
 	return new Promise(function(res) {
@@ -681,13 +700,12 @@ function setupDatabases() {
 }
 setupDatabases();
 
+var static_data = {}; // return static server files
 var static_path = "./frontend/static/";
 var static_path_web = "static/";
 
 var template_data = {}; // data used by the server
 var templates_path = "./frontend/templates/";
-
-var static_data = {}; // return static server files
 
 function load_static() {
 	for(var i in template_data) {
@@ -1349,7 +1367,7 @@ function command_prompt() {
 			return;
 		}
 		if(code == "help") {
-			console.log("stop: close server\nres: restart\nmaint: maintenance mode\nsta: reload templates and static files");
+			console.log("stop|exit: close server\nres: restart\nmaint: maintenance mode\nsta: reload templates and static files");
 			command_prompt();
 			return;
 		}
@@ -2800,9 +2818,10 @@ function get_ip_kind_limits(ip) {
 }
 
 var connections_per_ip = 50;
-function can_connect_ip_address(ip) {
+var superuser_connections_per_ip = 200;
+function can_connect_ip_address(ip, superuser) {
 	if(!ip_address_conn_limit[ip] || !ip || ip == "0.0.0.0") return true;
-	if(ip_address_conn_limit[ip] >= connections_per_ip) return false;
+	if(ip_address_conn_limit[ip] >= (superuser?superuser_connections_per_ip:connections_per_ip)) return false;
 	return true;
 }
 
@@ -2882,8 +2901,11 @@ async function manageWebsocketConnection(ws, req) {
 		}));
 		ws.close();
 	}
-
-	if(!can_connect_ip_address(ws.sdata.ipAddress)) {
+	
+	var cookies = parseCookie(req.headers.cookie);
+	var highConnLimit = (await get_user_info(cookies, true)).superuser;
+	
+	if(!can_connect_ip_address(ws.sdata.ipAddress, highConnLimit)) {
 		return error_ws("CONN_LIMIT", "Too many connections");
 	}
 	add_ip_address_connection(ws.sdata.ipAddress);
@@ -3247,8 +3269,7 @@ function start_server() {
 
 function executeJS(val) {
 	try {
-		var res = eval(val)
-		if(typeof res === "object") res = JSON.stringify(res);
+		var res = eval(val);
 		return res;
 	} catch(e) {
 		return e;
@@ -3320,6 +3341,8 @@ var global_data = {
 	blockIPAddress,
 	unblockIPAddress,
 	blocked_ip_list,
+	setBlockedPhrases,
+	blocked_phrase_list,
 	worldViews: {},
 	ranks_cache,
 	static_data,
