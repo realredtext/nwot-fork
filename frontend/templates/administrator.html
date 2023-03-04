@@ -288,8 +288,10 @@
 			<a href="/administrator/world_search/">World Search</a>
 			<br>
 			<a href="/administrator/user_search/">User Search</a>
+			{% if user.operator %}
 			<br>
 			<a href="/administrator/shell/">Run Backend JavaScript (WIP)</a>
+			{% endif %}
 			<br>
 			<a href="/administrator/ip_restrictions/">Manage IP Restrictions</a>
 		</div>
