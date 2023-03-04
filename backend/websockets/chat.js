@@ -166,7 +166,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 	}
 	
 	if(includesAnyOf(msg, blocked_phrase_list)) {
-		send({
+		var res = {
 			nickname: data.nickname,
 			realUsername: username_to_display,
 			id: ws.sdata.clientId,
@@ -178,7 +178,16 @@ module.exports = async function(ws, data, send, vars, evars) {
 			staff: user.staff,
 			color: data.color,
 			kind: "chat"
-		});
+		};
+		
+		if(user.authenticated && user.id in ranks_cache.users) {
+			var rank = ranks_cache[ranks_cache.users[user.id]];
+			res.rankName = rank.name;
+			res.rankColor = rank.chat_color;
+		};
+			
+		
+		send(res);
 		return;
 	};
 	

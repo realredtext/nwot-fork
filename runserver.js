@@ -75,6 +75,7 @@ CONST = {};
 CONST.tileCols = 16;
 CONST.tileRows = 8;
 CONST.tileArea = CONST.tileCols * CONST.tileRows;
+var global_data;
 
 // tile cache for fetching and updating
 // 3 levels: world_id -> tile_y -> tile_x
@@ -540,6 +541,7 @@ function setBlockedPhrases(array) {
 	if(array.length === 0) throw new RangeError("Provided list is empty!");
 	
 	blocked_phrase_list = array;
+	global_data.blocked_phrase_list = blocked_phrase_list;
 	fs.writeFileSync(settings.BLOCKED_PHRASE_PATH, blocked_phrase_list.join("\n"));
 };
 
@@ -3281,7 +3283,7 @@ function executeJS(val) {
 	};
 };
 
-var global_data = {
+global_data = {
 	memTileCache,
 	isTestServer,
 	announcement: function() { return announcement_cache },

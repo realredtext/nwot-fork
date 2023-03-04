@@ -9,9 +9,18 @@
 	<span><a href="/administrator/">« Back to Admin Panel</a></span>
 {% endblock %}
 
+{% block endhead %}
+	<style>
+		#subm_list {
+			width: 530px;
+			height: 670px;
+		}
+	</style>
+{% endblock %}
+
 {% block content %}
 	<div class="content_set">
-		<div class="content_set_title">Block IPs</div>
+		<div class="content_set_title">Set List</div>
 		<div class="content_set_content">
 			{% if message %}
 				<div class="content_set_content">
@@ -19,7 +28,7 @@
 				</div>
 			{% endif %}
 			<form method="POST" action=".">
-				<textarea name="subm_list">{{ phrase_list }}</textarea>
+				<textarea name="subm_list" id="subm_list">{{ phrase_list }}</textarea>
 				<input type="submit" value="Set List">
 				
 				<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrftoken }}">
