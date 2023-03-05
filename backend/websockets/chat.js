@@ -196,7 +196,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 	// [rank, name, args, description, example]
 	var command_list = [
 		// superuser
-		[2, "worlds", null, "list most 1000 active worlds", null],
+		[2, "worlds", ["count"], "list most 1000 active worlds", "15"],
 		[2, "users", null, "shows all the users on your world", null],
 		[2, "getip", ["id"], "get IP by ID", "1220"],
 
@@ -294,13 +294,16 @@ module.exports = async function(ws, data, send, vars, evars) {
 	}
 
 	var com = {
-		worlds: function() {
+		worlds: function(count) {
+			count = san_nbr(count);
+			if(!count) count = 100;
+			if(count < 1) count = 1;
+			
 			if(!user.superuser) {
 				serverChatResponse("Invalide command: /worlds");
 				return;
 			};
-			var topCount = 1000;
-			var lst = topActiveWorlds(topCount);
+			var lst = topActiveWorlds(count);
 			var worldList = "";
 			for(var i = 0; i < lst.length; i++) {
 				var row = lst[i];
@@ -317,7 +320,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 					${worldList}
 				</div>
 			`;
-			serverChatResponse("Currently loaded worlds (top " + topCount + "): " + listWrapper, data.location)
+			serverChatResponse("Currently loaded worlds (top " + count + "): " + listWrapper, data.location)
 			return;
 		},
 		help: function() {
@@ -626,7 +629,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 
 		switch(command) {
 			case "worlds":
-				if(superuser) com.worlds();
+				if(superuser) com.worlds(args[1]);
 				return;
 			case "help":
 				com.help();
