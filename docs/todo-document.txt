@@ -1,7 +1,3 @@
 - erase spam from chat (?)
 - (worlds) change title of page
-- DOM rendering mode
 - world owners can delete individual messages in chatbox. admins can delete from global (staff delete everything)
-- menu too big? some scrollbar if longer than screen height
-- put adm-zip in /lib
-- /warp chatlog
