@@ -6,6 +6,8 @@ function escape_control(str) {
 	return str;
 }
 
+var timeouts = {};
+
 module.exports.GET = async function(req, serve, vars, evars) {
 	var query_data = evars.query_data;
 	var user = evars.user;
@@ -21,6 +23,9 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	input = input.trim();
 	if(!input && !user.superuser) return serve("");
 	if(input.length < 4 && !user.superuser) return serve("");
+	if(timeouts[evars.ipAddress] > Date.now() && !user.superuser) return serve("Exceeded rate limit, wait five more seconds.");
+	
+	if(timeouts[evars.ipAddress] < Date.now()) delete timeouts[evars.ipAddress];
 	
 	var limit = 10;
 	if(user.superuser) limit = Number.MAX_SAFE_INTEGER;
@@ -37,4 +42,6 @@ module.exports.GET = async function(req, serve, vars, evars) {
 		users.push(list[i].username);
 	}
 	serve(users.join("\n"));
+	
+	if(!user.superuser) timeouts[evars.ipAddress] = Date.now()+5000;
 }
