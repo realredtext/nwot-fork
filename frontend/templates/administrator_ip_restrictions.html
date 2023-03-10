@@ -10,20 +10,18 @@
 {% endblock %}
 
 {% block content %}
+	{% if restr_array.length %}
 	<div class="content_set">
 		<div class="content_set_title">Restricted IPs</div>
 		<div class=content_set_content>
-			{% if restr_array.length %}
 				<div style="background-color: #FFF">
 					{% for ip in restr_array %}
 						<span>{{ ip }}</span><br>
 					{% endfor %}
 				</div>
-			{% else %}
-				<b>No blocked IPs</b>
-			{% endif %}
 		</div>
 	</div>
+	{% endif %}
 	<div class="content_set">
 		<div class="content_set_title">Block IPs</div>
 		<div class="content_set_content">
