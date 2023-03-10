@@ -28,10 +28,17 @@ module.exports.GET = async function(req, serve, vars, evars, params) {
 		return await dispage("404", null, req, serve, vars, evars);
 	};
 	
+	var restr_array = Object.keys(blocked_ip_list);
+	for(var i of restr_array) {
+		if(blocked_ip_list[i].reason) {
+			restr_array[restr_array.indexOf(i)] += " | "+blocked_ip_list[i].reason;
+		};
+	};
+	
 	serve(HTML("administrator_ip_restrictions.html", {
 		block_message: params.block_message,
 		unblock_message: params.unblock_message,
-		restr_array: Object.keys(blocked_ip_list),
+		restr_array: restr_array,
 		csrftoken: evars.cookies.csrftoken
 	}));
 }
