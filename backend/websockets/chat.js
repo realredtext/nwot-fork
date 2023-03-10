@@ -150,6 +150,8 @@ module.exports = async function(ws, data, send, vars, evars) {
 			 .replace(/\$channel/g, ws.sdata.channel)
 			 .replace(/\$username/g, username_to_display)
 			 .replace(/shorts\//gi, "watch?v=");
+	
+	if(!user.operator) msg = html_tag_esc(msg); //about time they get escaped server side
 
 	if(!msg) return;
 

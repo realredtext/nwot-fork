@@ -1,6 +1,8 @@
 module.exports.GET = async function(req, serve, vars, evars) {
 	var HTML = evars.HTML;
 	var user = evars.user;
+	
+	var dispage = vars.dispage;
 
 	if(!user.superuser) {
 		return await dispage("404", null, req, serve, vars, evars);
