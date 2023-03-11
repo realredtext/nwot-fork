@@ -13,7 +13,7 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	var clean_date = create_boolean(query_data.clean_date);
 	
 	if(!user.superuser && (query_user !== user.username)) {
-		return await dispage("404", {}, req, serve, vars, evars);
+		return await dispage("404", null, req, serve, vars, evars);
 	};
 	
 	var users = await db.all("SELECT username FROM auth_user");

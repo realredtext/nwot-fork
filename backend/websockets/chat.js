@@ -65,7 +65,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 	var ranks_cache = vars.ranks_cache;
 	var accountSystem = vars.accountSystem;
 	var create_date = vars.create_date;
-	var blocked_phrase_list = vars.blocked_phrase_list;
+	var blocked_phrase_list = vars.blocked_phrase_list.filter(e => !(e.startsWith("/")));
 	if(blocked_phrase_list.length === 1 && blocked_phrase_list[0] === "") {
 		blocked_phrase_list = []; //dont want EVERY message to be blocked
 	};
@@ -151,8 +151,6 @@ module.exports = async function(ws, data, send, vars, evars) {
 			 .replace(/\$username/g, username_to_display)
 			 .replace(/shorts\//gi, "watch?v=");
 	
-	if(!user.operator) msg = html_tag_esc(msg); //about time they get escaped server side
-
 	if(!msg) return;
 
 	data.color += "";
@@ -731,6 +729,10 @@ module.exports = async function(ws, data, send, vars, evars) {
 	if(msg.startsWith("/")) {
 		isCommand = true;
 	}
+	
+	if(!isCommand && !user.operator) {
+		msg = html_tag_esc(msg);
+	};
 
 	if(!isCommand && !isMuted) {
 		if(data.location == "page") {
