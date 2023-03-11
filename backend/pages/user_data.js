@@ -7,8 +7,10 @@ module.exports.GET = async function(req, serve, vars, evars) {
     var user = evars.user;
 	var HTML = evars.HTML;
 	var query_data = evars.query_data;
+	
 	var query_user = query_data.user;
 	var clean_date = create_boolean(query_data.clean_date);
+	
 	if(!user.superuser && (query_user !== user.username)) {
 		return serve(HTML("404.html"));
 	};
@@ -19,7 +21,7 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	}).includes(query_user);
 	
 	if(!validUser) {
-		serve("Invalid query, either there is no user of name "+query_user+" or your query should be \"?q=usernameHere\"");
+		return serve("Invalid query, either there is no user of name "+query_user+" or your query should be \"?q=usernameHere\"");
 	};
 	
 	var res = await db.get("SELECT id, username, email, level, is_active, date_joined FROM auth_user WHERE username=?", query_user);
