@@ -12,12 +12,14 @@
 {% block content %}
 	<div class="content_set">
 		<div class="content_set_title">Execute backend Javascript</div>
+		<span style="color: #f00" title="NOTICE: Your input runs in the FUNCTION scope, NOT in runserver's scope!">!</span>
 		<div class="content_set_content">
-			<b>This page is WIP, do NOT expect predictable results</b>
 			<form method="POST" action=".">
 				Run script: 
 				<input type="text" name="shell_script" value="" autocomplete="off">
-				<input type="submit" value="Run">
+				<input type="submit" value="Run"><br>
+				<label>Async?</label>
+				<input type="checkbox" name="do_async">
 				
 				<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrftoken }}">
 			</form>

@@ -1183,7 +1183,6 @@ async function idToUser(id) {
 	
 	return associatedUser;
 }
-//nice line number
 const checkHash = function(hash, pass) {
 	if(typeof pass !== "string") return false;
 	if(typeof hash !== "string") return false;
@@ -3274,13 +3273,25 @@ function start_server() {
 	});
 }
 
-function executeJS(val) {
-	try {
-		var res = eval(val);
-		return res;
-	} catch(e) {
-		return e;
+async function executeJS(val, async) {
+	var res;
+	
+	if(async) {
+		try {
+			eval("var afnc = async function() {return "+val+" }");
+			res = await afnc();
+		} catch(e) {
+			res = e;
+		};
+	} else {
+		try {
+			res = eval(val);
+		} catch(e) {
+			res = e;
+		};
 	};
+	
+	return res;
 };
 
 global_data = {
