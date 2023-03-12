@@ -1351,7 +1351,7 @@ var prompt_password_new_account = {
 var ask_password = false;
 var account_to_create = "";
 var prompt_stopped = false;
-var prompt_await = false;
+var prompt_await = true;
 
 function command_prompt() {
 	async function on_input(err, input) {
@@ -2183,6 +2183,12 @@ async function process_request(req, res) {
 					// Return the page
 					var pageStat = await pageRes[method](req, dispatch, global_data, evars, {});
 					if(pageStat === -1) continue;
+					
+					var invalidMonitorURL = URL === "world_style/" || URL.startsWith("administrator/monitor") || URL.startsWith("static/") || URL === "world_props/";
+					
+					if(!invalidMonitorURL) {
+						broadcastMonitorEvent(ipAddress+": "+"Type "+method+" made to "+URL);
+					};
 				} else {
 					dispatch("Method " + method + " not allowed.", 405);
 				}
@@ -2197,7 +2203,7 @@ async function process_request(req, res) {
 	if(!page_resolved || !dispatch.isResolved()) {
 		return dispatch("HTTP 404: The resource cannot be found", 404);
 	}
-
+	
 	res.writeHead(404);
 	res.end();
 }
