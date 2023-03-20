@@ -525,7 +525,7 @@ function blockIPAddress(addr, reason, worlds /*array*/) {
 	
 	fs.writeFileSync(settings.BLOCKED_IP_PATH, JSON.stringify(blocked_ip_list));
 	console.log(`Blocked ${addr} from ${blockedFrom}, reason: ${reason}`);
-};
+}
 
 function unblockIPAddress(addr) {
 	if(blocked_ip_list[addr]) {
@@ -2238,8 +2238,6 @@ function announce(text) {
 	})();
 }
 
-var writeRatelimit = 20480;
-
 async function validate_claim_worldname(worldname, vars, evars, rename_casing, world_id) {
 	var user = evars.user;
 
@@ -3350,7 +3348,6 @@ global_data = {
 	wss, // this is undefined by default, but will get a value once wss is initialized
 	topActiveWorlds,
 	NCaseCompare,
-	writeRatelimit,
 	handle_error,
 	client_ips,
 	modify_bypass_key,
