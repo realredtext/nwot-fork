@@ -29,19 +29,23 @@ var ws_functions = {
 	umonitor_leave: function(data) {
 		var user = data.user;
 		
-		message.innerText = `${user} left User Monitor`;
+		message.innerText = `- ${user}`;
+		message.style.color = "#FF0000";
 		setTimeout(() => {
 			message.innerText = "";
+			message.style.color = "#000000";
 		}, 2000);
 	},
 	
 	umonitor_join: function(data) {
 		var user = data.user;
 		
-		message.innerText = `${user} joined User Monitor`;
-		setTimeout(()=>{
+		message.innerText = `+${user}`;
+		message.style.color = "#00BB00";
+		setTimeout(() => {
 			message.innerText = "";
-		}, 2000)
+			message.style.color = "#000000";
+		}, 2000);
 	},
 	user_leave: function(data) {
 		var channel = data.channel;

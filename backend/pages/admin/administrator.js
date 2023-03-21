@@ -141,7 +141,7 @@ module.exports.POST = async function(req, serve, vars, evars) {
 		if(!user.operator) return;
 		var cmd = post_data.manage_server;
 		var postedCsrftoken = post_data.csrftoken;
-		if(postedCsrftoken !== evars.user.csrftoken) return;
+		if(postedCsrftoken !== evars.cookies.csrftoken) return;
 		
 		if(cmd == "restart") {
 			serve("SUCCESS");

@@ -6,8 +6,11 @@ module.exports = async function(ws, data, send, vars, evars) {
 	var db = vars.db;
 	var san_nbr = vars.san_nbr;
 	var tile_database = vars.tile_database;
+	
+	var is_owner = user.id === world.owner_id;
+	var canClearTiles = user.superuser || is_owner;
 
-	if(!user.superuser) return;
+	if(!canClearTiles) return;
 
 	var tileX = san_nbr(data.tileX);
 	var tileY = san_nbr(data.tileY);
