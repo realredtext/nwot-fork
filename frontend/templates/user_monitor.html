@@ -6,12 +6,6 @@
 
 {% block endhead %}
 	<script src="/static/user_monitor.js" defer></script>
-	<style>
-		.socket_content {
-			background: "#CCCCCC";
-			border: 2px solid "#AAAAAA";
-		}
-	</style>
 {% endblock %}
 
 {% block header %}
@@ -24,7 +18,7 @@
 		<div class="content_set_title">Connected Sockets</div>
 		<div class="content_set_content">
 			<i style="font-size: 80%" id="message"></i>
-			<div class="socket_content" id="sockets">
+			<div class="sock" id="sockets" style="border: 3px solid #AAA; background-color: #FFF; color: 000; border-radius: 3px;">
 			{% for socket in socket_list %}
 				<span id={{ socket.channel }}>
 				[World: {{socket.world}}, Name: {{socket.username}}, Level: {{socket.level}}, ID: {{socket.clientId}}, Channel: {{socket.channel}}, IP: {{socket.ipAddress}}]
