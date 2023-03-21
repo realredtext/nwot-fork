@@ -6,6 +6,9 @@ var display = byId("sockets");
 var message = byId("message");
 
 var socket = new WebSocket("ws" + (window.location.protocol === "https:" ? "s" : "") + "://" + window.location.host + "/administrator/user_monitor/ws/");
+(() => { //onload check for whether or not to show the border
+	updateDisplayBorder();
+})()
 socket.onmessage = function(msg) {
 	var data = JSON.parse(msg.data);
 	
@@ -23,6 +26,14 @@ function formatData(data) {
 	formattedData += ", Channel: "+data.channel;
 	formattedData += ", IP: "+data.ipAddress+"]";
 	return formattedData;
+};
+
+function updateDisplayBorder() {
+	if(display.childElementCount) {
+		display.style.border = "3px solid #AAA";
+	} else {
+		display.style.border = "0px";
+	}
 }
 
 var ws_functions = {
@@ -50,6 +61,7 @@ var ws_functions = {
 	user_leave: function(data) {
 		var channel = data.channel;
 		byId(channel).remove();
+		updateDisplayBorder();
 	},
 	user_join: function(data) {
 		var clientData = data.data;
@@ -57,5 +69,7 @@ var ws_functions = {
 		newLine.innerText = formatData(JSON.parse(clientData));
 		newLine.id = JSON.parse(clientData).channel;
 		display.appendChild(newLine);
+		
+		updateDisplayBorder();
 	}
 };
