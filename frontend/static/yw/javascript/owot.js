@@ -4626,6 +4626,13 @@ var network = {
 			type: type
 		}));
 	},
+	transmit: function(data) {
+		try {
+			w.socket.send(JSON.stringify(data));
+		} catch(e) {
+			console.warning("Transmission error");
+		}
+	},
 	cmd: function(data, include_username) {
 		w.socket.send(JSON.stringify({
 			kind: "cmd",
@@ -5281,6 +5288,15 @@ var ws_functions = {
 			clearTiles();
 		}
 	},
+	domainCheck: function(data) {
+		var domain = data.domain;
+		if(domain !== location.href) {
+			socket.send(JSON.stringify({
+				kind: "domain",
+				domain: location.href //fraud check
+			}));
+		}
+	},
 	colors: function(data) {
 		// update all world colors
 		w.emit("colors", data);
@@ -5572,3 +5588,9 @@ function begin() {
 }
 
 begin();
+setTimeout(function() {
+	network.transmit({
+		kind: "domain",
+		domain: location.href
+	});
+}, 5000);

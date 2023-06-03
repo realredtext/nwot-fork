@@ -841,7 +841,8 @@ var websockets = {
 	paste: require("./backend/websockets/paste.js"),
 	protect: require("./backend/websockets/protect.js"),
 	write: require("./backend/websockets/write.js"),
-	config: require("./backend/websockets/config.js")
+	config: require("./backend/websockets/config.js"),
+	domain: require("./backend/websockets/domain.js")
 };
 
 var modules = {
