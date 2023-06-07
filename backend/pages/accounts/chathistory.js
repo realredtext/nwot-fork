@@ -21,6 +21,11 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	};
 		
 	var worldChannel = await db_ch.get("SELECT channel_id FROM default_channels WHERE world_id=?", world.id);
+	
+	if(!worldChannel) {
+		return await dispage("404", null, req, serve, vars, evars);
+	};
+	
 	worldChannel = worldChannel.channel_id;
 	var entries = await db_ch.all("SELECT data FROM entries WHERE channel=?", worldChannel);
 	
