@@ -7,6 +7,11 @@
 {% block endhead %}
 <link rel="stylesheet" type="text/css" href="/static/css/autocomplete.css">
 <script>
+	function gotoChathistory() {
+		var world = location.href.split("accounts/configure/")[1];
+		location.href = "/accounts/chathistory/"+world;
+		return false;
+	}
 	var actionMethod = "";
 	onload = function() {
 		unclaim.onclick = function() { actionMethod = "unclaim" };
@@ -413,6 +418,9 @@
 							<div>
 								Do not log edits
 								<input name="no_log_edits" type="checkbox"{%if no_log_edits%} checked{%endif%}>
+							</div>
+							<div>
+								<button onclick="return gotoChathistory();">Get World Chathistory</button>
 							</div>
 						</div>
 					</div>

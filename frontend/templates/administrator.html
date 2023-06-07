@@ -18,6 +18,10 @@
 			window.location.pathname = "/accounts/download/" + worldname_download.value + "/";
 			return false;
 		}
+		function goto_chathistory() {
+			window.location.pathname = "/accounts/chathistory/" + worldname_chathistory.value + "/";
+			return false;
+		}
 		function goto_user_by_username() {
 			window.location.pathname = "/administrator/users/by_username/" + user_info_by_username.value + "/";
 			return false;
@@ -153,6 +157,16 @@
 			<form onsubmit="return goto_download();">
 				World name: 
 				<input type="text" name="worldname" id="worldname_download" value="" autocomplete="off">
+				<input type="submit" value="Download">
+			</form>
+		</div>
+	</div>
+	<div class="content_set">
+		<div class="content_set_title">Get world Chathistory</div>
+		<div class="content_set_content">
+			<form onsubmit="return goto_chathistory();">
+				World name:
+				<input type="text" name="worldname_" id="worldname_chathistory" value="" autocomplete="off">
 				<input type="submit" value="Download">
 			</form>
 		</div>
