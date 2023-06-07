@@ -780,7 +780,8 @@ var pages = {
 		tabular: require("./backend/pages/accounts/tabular.js"),
 		timemachine: require("./backend/pages/accounts/timemachine.js"),
 		verify: require("./backend/pages/accounts/verify.js"),
-		verify_email: require("./backend/pages/accounts/verify_email.js")
+		verify_email: require("./backend/pages/accounts/verify_email.js"),
+		chathistory: require("./backend/pages/accounts/chathistory.js")
 	},
 	admin: {
 		administrator: require("./backend/pages/admin/administrator.js"),
@@ -1472,6 +1473,8 @@ var url_regexp = [ // regexp , function/redirect to , options
 	[/^accounts\/tabular[\/]?$/g, pages.accounts.tabular],
 	[/^accounts\/verify_email\/(.*)[\/]?$/g, pages.accounts.verify_email],
 	[/^accounts\/sso[\/]?$/g, pages.accounts.sso],
+	[/^accounts\/chathistory\/$/g, pages.accounts.chathistory], // for front page chathistory
+	[/^accounts\/chathistory\/(.*)\/$/g, pages.accounts.chathistory],
 
 	[/^ajax\/protect[\/]?$/g, pages.protect],
 	[/^ajax\/unprotect[\/]?$/g, pages.unprotect],
