@@ -4916,9 +4916,6 @@ Object.assign(w, {
 	getCenterCoords: function() { // [y, x]
 		return [-positionY / tileH, -positionX / tileW];
 	},
-	chat: {
-		send: api_chat_send
-	},
 	broadcastReceive: function(force) {
 		if(w.receivingBroadcasts && !force) return;
 		w.receivingBroadcasts = true;
