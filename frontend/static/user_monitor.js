@@ -33,7 +33,7 @@ function updateDisplayBorder() {
 		display.style.border = "3px solid #AAA";
 	} else {
 		display.style.border = "0px";
-	}
+	};
 }
 
 var ws_functions = {
