@@ -1483,7 +1483,7 @@ var url_regexp = [ // regexp , function/redirect to , options
 	[/^ajax\/coordlink[\/]?$/g, pages.coordlink],
 	[/^ajax\/urllink[\/]?$/g, pages.urllink],
 	
-	[/^administrator$/g, "/administrator/"],
+	[/^administrator$/g, "/administrator/"], //use valid format
 	[/^administrator\/$/g, pages.admin.administrator],
 	[/^administrator\/user\/(.*)\/$/g, pages.admin.user],
 	[/^administrator\/user_search[\/]?$/g, pages.admin.user_search],
@@ -2783,7 +2783,8 @@ var ws_limits = { // [amount per ip, per ms, minimum ms cooldown]
 	write:			[256, 1000, 0], // rate-limiting handled separately
 	paste:			[10, 500, 0],
 	cursor:			[70, 1000, 0],
-	config:			[128, 1000, 0]
+	config:			[128, 1000, 0],
+	domain:			[5, 1000, 0]
 };
 
 /*
