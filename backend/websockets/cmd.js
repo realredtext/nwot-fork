@@ -5,6 +5,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 	var world = evars.world;
 
 	var data_rec = data.data;
+	var dataType = typeof (data.data);
 	var globalBroadcast = data.global_broadcast;
 	if(!user.operator && globalBroadcast) globalBroadcast = false;
 	
@@ -34,6 +35,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 	var cdata = {
 		kind: "cmd",
 		data: (data_rec + "").slice(0, 2048),
+		type: dataType,
 		sender: channel,
 		source: "cmd"
 	};

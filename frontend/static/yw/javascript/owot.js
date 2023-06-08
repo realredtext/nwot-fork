@@ -4634,6 +4634,7 @@ var network = {
 		}
 	},
 	cmd: function(data, include_username) {
+		if(typeof data === "bigint") data = data.toString(); //bigints cant be stringified with JSON.stringify
 		w.socket.send(JSON.stringify({
 			kind: "cmd",
 			data: data, // maximum length of 2048
@@ -5253,6 +5254,19 @@ function tile_offset_object(data, tileOffX, tileOffY) {
 	}
 }
 
+function convertType(data, originalType) { //convert to native type
+	if(originalType === "string") return data;
+	
+	if(originalType === "object") data = JSON.parse(data);
+	if(originalType === "number") data = +data;
+	if(originalType === "bigint") data = BigInt(data);
+	if(originalType === "boolean") data = data==="false"?false:true;
+	if(originalType === "undefined") data = void data;
+	if(originalType === "null") data = null;
+	
+	return data;
+}
+
 var ws_functions = {
 	fetch: function(data) {
 		if("request" in data) {
@@ -5506,6 +5520,7 @@ var ws_functions = {
 		}
 	},
 	cmd: function(data) {
+		data.data = convertType(data.data, data.type);
 		w.emit("cmd", data);
 	},
 	cmd_opt: function(data) {
