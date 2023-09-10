@@ -70,6 +70,10 @@ module.exports = async function(ws, data, send, vars, evars) {
 		blocked_phrase_list = []; //dont want EVERY message to be blocked
 	};
 	
+	if(blocked_phrase_list.includes("")) {
+		blocked_phrase_list = blocked_phrase_list.filter(e => !!e);
+	};
+	
 	idToIp = function(id) {
 		id = san_nbr(id);
 		return id2ip[id+""];
