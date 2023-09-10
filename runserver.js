@@ -469,7 +469,7 @@ var read_staticRaw,
 	staticIdx_size;
 function initializeStaticSys() {
 	if(!fs.existsSync(settings.bypass_key)) {
-		crypto.randomBytes(25).toString("hex");
+		let rand = crypto.randomBytes(25).toString("hex");
 		fs.writeFileSync(settings.bypass_key, rand);
 	}
 	
