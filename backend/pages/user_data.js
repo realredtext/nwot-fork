@@ -22,7 +22,7 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	}).includes(query_user);
 	
 	if(!validUser) {
-		return serve("Invalid query, either there is no user of name "+query_user+" or your query should be \"?q=usernameHere\"");
+		return serve("Invalid query, either there is no user of name "+query_user+" or your query should be \"?user=usernameHere\"");
 	};
 	
 	var res = await db.get("SELECT id, username, email, level, is_active, date_joined FROM auth_user WHERE username=?", query_user);
