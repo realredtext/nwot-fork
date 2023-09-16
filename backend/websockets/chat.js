@@ -304,7 +304,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 			if(count < 1) count = 1;
 			
 			if(!user.superuser) {
-				serverChatResponse("Invalide command: /worlds");
+				serverChatResponse("Invalid command: /worlds");
 				return;
 			};
 			var lst = topActiveWorlds(count);
@@ -513,7 +513,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 		},
 		mute: function(id, time) {
 			if(!user.staff) {
-				serverChatResponse("Invalide command: /mute");
+				serverChatResponse("Invalid command: /mute");
 				return;
 			}
 			id = san_nbr(id);
@@ -580,7 +580,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 		},
 		clearmutes: function() {
 			if(!user.staff) {
-				serverChatResponse("Invalide command: /clearmutes");
+				serverChatResponse("Invalid command: /clearmutes");
 				return;
 			}
 			var cnt = 0;
