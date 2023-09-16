@@ -3513,6 +3513,7 @@ function stopServer(restart, maintenance) {
 
 		var count = handles.length;
 		console.log("Stopped server with " + count + " handles remaining.");
+		console.log("If Node is still running, press CTRL+C twice");
 		if(restart) {
 			sendProcMsg("RESTART");
 		} else if(maintenance) {
