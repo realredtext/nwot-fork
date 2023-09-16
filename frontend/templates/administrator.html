@@ -30,6 +30,10 @@
 			window.location.pathname = "/administrator/users/by_username/" + user_info_by_username.value + "/";
 			return false;
 		}
+		function goto_user_messages() {
+			window.location.pathname = "/accounts/user_messages/" + user_messages.value + "/";
+			return false
+		}
 		function goto_user_by_id() {
 			window.location.pathname = "/administrator/users/by_id/" + user_info_by_id.value + "/";
 			return false;
@@ -171,6 +175,16 @@
 			<form onsubmit="return goto_chathistory();">
 				World name:
 				<input type="text" name="worldname_" id="worldname_chathistory" value="" autocomplete="off">
+				<input type="submit" value="Get">
+			</form>
+		</div>
+	</div>
+	<div class="content_set">
+		<div class="content_set_title">Get User Messages</div>
+		<div class="content_set_content">
+			<form onsubmit="return goto_user_messages()">
+				User name:
+				<input type="text" name="username" id="user_messages" value="" autocomplete="off">
 				<input type="submit" value="Get">
 			</form>
 		</div>
