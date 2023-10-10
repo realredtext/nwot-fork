@@ -85,6 +85,7 @@ console.log("Loaded libs");
 
 var DATA_PATH = "../data/";
 var DATA_PATH_TEST = DATA_PATH + "test/";
+var DATA_PATH_PLUGINS = DATA_PATH + "plugins/";
 var SETTINGS_PATH = DATA_PATH + "settings.json";
 
 function initializeDirectoryStruct() {
@@ -95,6 +96,10 @@ function initializeDirectoryStruct() {
 	// directory used for storing data for the test server
 	if(!fs.existsSync(DATA_PATH_TEST)) {
 		fs.mkdirSync(DATA_PATH_TEST, 0o777);
+	}
+	
+	if(!fs.existsSync(DATA_PATH_PLUGINS)) {
+		fs.mkdirSync(DATA_PATH_PLUGINS, 0o777);
 	}
 	// initialize server configuration
 	if(!fs.existsSync(SETTINGS_PATH)) {
@@ -3428,6 +3433,23 @@ process.once("SIGTERM", function() {
 });
 process.once("SIGINT", function() {
 	stopServer();
+});
+
+//plugin loading
+fs.readdir(DATA_PATH_PLUGINS, function(error, files) {
+	let count = 0;
+	if(error) {
+		return console.log("Failed to read plugins file");
+	};
+	
+	files.forEach(function(file) {
+		let script = fs.readFileSync(DATA_PATH_PLUGINS+file, "utf-8");
+		executeJS(script, true);
+		count++;
+	});
+	
+	if(count > 0) console.log("Loaded "+(count+[])+" plugins.");
+		
 });
 
 // stops server (for upgrades/maintenance) without crashing everything
