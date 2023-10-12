@@ -22,10 +22,10 @@
 			window.location.pathname = "/accounts/chathistory/" + worldname_chathistory.value + "/";
 			return false;
 		}
-		//function goto_userdata() {
-		//	window.location.pathname = "/user_data?user="+username_userdata.value;
-		//	return false;
-		//}
+		function goto_userdata() {
+			window.location.pathname = "/user_data/"+username_userdata.value;
+			return false;
+		}
 		function goto_user_by_username() {
 			window.location.pathname = "/administrator/users/by_username/" + user_info_by_username.value + "/";
 			return false;
@@ -202,7 +202,7 @@
 		</div>
 	</div>
 	{% endif %}
-	<!--<div class="content_set">
+	<div class="content_set">
 		<div class="content_set_title">Get User Data</div>
 		<div class="content_set_content">
 			<form onsubmit="return goto_userdata()">
@@ -212,7 +212,6 @@
 			</form>
 		</div>
 	</div>
-	-->
 	<div class="content_set">
 		<div class="content_set_title">User Ranks</div>
 		<div class="content_set_content">
