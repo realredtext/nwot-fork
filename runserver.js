@@ -1516,7 +1516,7 @@ var url_regexp = [ // regexp , function/redirect to , options
 	
 	[/^world_style[\/]?$/g, pages.world_style],
 	[/^world_props[\/]?$/g, pages.world_props],
-	[/^user_data[\/]?$/g, pages.user_data],
+	[/^user_data\/(.*)[\/]?$/g, pages.user_data],
 
 	[/^other\/random_color[\/]?$/g, pages.other.random_color, { no_login: true }],
 	[/^other\/backgrounds\/(.*)[\/]?$/g, pages.other.load_backgrounds, { no_login: true }],
