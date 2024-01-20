@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}
+	World List | Our World of Text
+{% endblock %}
+
+{% block header %}
+	<h1>World List</h1>
+	<span><a href="/administrator/">« Back to Admin Panel</a></span>
+{% endblock %}
+
+{% block content %}
+	<div class="content_set" style="width: auto; display: table;">
+		<div class="content_set_title">World List</div>
+		<div class="content_set_content">
+			<table>
+				<tbody>
+					<tr>
+						<th>
+							ID
+						</th>
+						<th>
+							Name
+						</th>
+						<th>
+							Views
+						</th>
+						<th>
+							Owner
+						</th>
+						<th>
+							Creation Date
+						</th>
+						<th>
+							Writability
+						</th>
+						<th>
+							Readability
+						</th>
+					</tr>
+					{% for world in worlds %}
+					<tr>
+						<td>
+							{{world.id}}
+						</td>
+						<td>
+							<a href="/accounts/configure/{{world.name}}/">{{world.name}}</a>
+						</td>
+						<td>
+							{{world.views}}
+						</td>
+						<td>
+							<a href="/user_data/{{world.owner}}">{{world.owner}}</a>
+						</td>
+						<td>
+							{{world.created_at}}
+						</td>
+						<td>
+							{{world.writability}}
+						</td>
+						<td>
+							{{world.readability}}
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+{% endblock %}

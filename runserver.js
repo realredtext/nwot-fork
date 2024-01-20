@@ -807,7 +807,8 @@ var pages = {
 		user_monitor: require("./backend/pages/admin/user_monitor.js"),
 		shell: require("./backend/pages/admin/shell.js"),
 		ip_restrictions: require("./backend/pages/admin/ip_restrictions.js"),
-		chat_filter: require("./backend/pages/admin/chat_filter.js")
+		chat_filter: require("./backend/pages/admin/chat_filter.js"),
+		world_list: require("./backend/pages/admin/world_list.js")
 	},
 	other: {
 		ipaddress: require("./backend/pages/other/ipaddress.js"),
@@ -1509,6 +1510,7 @@ var url_regexp = [ // regexp , function/redirect to , options
 	[/^administrator\/shell[\/]?$/g, pages.admin.shell],
 	[/^administrator\/ip_restrictions[\/]?$/g, pages.admin.ip_restrictions],
 	[/^administrator\/chat_filter[\/]?$/g, pages.admin.chat_filter],
+	[/^administrator\/world_list[\/]?$/g, pages.admin.world_list],
 
 	[/^script_manager\/$/g, pages.script_manager],
 	[/^script_manager\/edit\/(.*)\/$/g, pages.script_edit],

@@ -338,6 +338,10 @@
 			<a href="/administrator/ip_restrictions/">Manage IP Restrictions</a>
 			<br>
 			<a href="/administrator/chat_filter/">Manage Blocked Phrases</a>
+			<br>
+			{% if user.operator %}
+			<a href="/administrator/world_list/">World List</a>
+			{% endif %}
 		</div>
 	</div>
 

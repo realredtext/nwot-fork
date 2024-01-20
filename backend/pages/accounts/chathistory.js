@@ -4,6 +4,7 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	var db = vars.db;
 	var db_ch = vars.db_ch;
 	var world_get_or_create = vars.world_get_or_create;
+	var filename_sanitize = vars.filename_sanitize;
 	
 	var user = evars.user;
 	var superuser = user.superuser;
@@ -21,7 +22,6 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	};
 		
 	var worldChannel = await db_ch.get("SELECT channel_id FROM default_channels WHERE world_id=?", world.id);
-	
 	if(!worldChannel) {
 		return await dispage("404", null, req, serve, vars, evars);
 	};
@@ -38,6 +38,7 @@ module.exports.GET = async function(req, serve, vars, evars) {
 	});
 	
 	serve(JSON.stringify(entries), null, {
-		mime: "application/json"
+		mime: "application/json; charset=utf8",
+		download_file: filename_sanitize("Chathistory_" + worldName + ".json")
 	});
 }
