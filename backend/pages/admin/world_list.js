@@ -20,8 +20,8 @@ module.exports.GET = async function(req, serve, vars, evars, params) {
 			world.views = world.properties.views;
 			delete world.properties;
 		}
-		world.owner_id = (await db.get("SELECT username FROM auth_user WHERE id=?", world.owner_id)).username;
-		world.owner = world.owner_id;
+		world.owner_id = world.owner_id || 0;
+		if(world.owner_id) world.owner = (await db.get("SELECT username FROM auth_user WHERE id=?", world.owner_id)).username;
 		delete world.owner_id;
 	};
 
