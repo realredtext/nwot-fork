@@ -66,6 +66,8 @@ module.exports = async function(ws, data, send, vars, evars) {
 	var accountSystem = vars.accountSystem;
 	var create_date = vars.create_date;
 	var blocked_phrase_list = vars.blocked_phrase_list.filter(e => !(e.startsWith("/")));
+	var phrasePenaltyTime = vars.phrasePenaltyTime;
+	
 	if(blocked_phrase_list.length === 1 && blocked_phrase_list[0] === "") {
 		blocked_phrase_list = []; //dont want EVERY message to be blocked
 	};
@@ -189,7 +191,11 @@ module.exports = async function(ws, data, send, vars, evars) {
 			res.rankName = rank.name;
 			res.rankColor = rank.chat_color;
 		};
-			
+
+		if(phrasePenaltyTime > 0) {
+			blocked_ips[ws.sdata.ipAddress] = Date.now() + phrasePenaltyTime*1000;
+			return serverChatResponse("You have been muted for "+ ~~(phrasePenaltyTime/60) +" minutes due to using a banned phrase.");
+		};
 		
 		send(res);
 		return;

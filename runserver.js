@@ -550,6 +550,12 @@ function setBlockedPhrases(array) {
 	fs.writeFileSync(settings.BLOCKED_PHRASE_PATH, blocked_phrase_list.join("\n"));
 };
 
+var phrasePenaltyTime = 0;
+function setPhraseTime(n) {
+	phrasePenaltyTime = n;
+	global_data.phrasePenaltyTime = n;
+};
+
 async function staticIdx_append(data) {
 	return new Promise(function(res) {
 		write_staticIdx.write(data, function() {
@@ -3398,7 +3404,9 @@ global_data = {
 	uviasSendIdentifier,
 	client_cursor_pos,
 	create_boolean,
-	executeJS
+	executeJS,
+	phrasePenaltyTime,
+	setPhraseTime
 };
 
 async function sysLoad() {

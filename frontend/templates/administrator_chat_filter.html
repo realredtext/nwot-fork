@@ -34,5 +34,14 @@
 				<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrftoken }}">
 			</form>
 		</div>
+		<div class="content_set_content">
+			<form method="POST" action=".">
+				<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrftoken }}">
+				
+				Mute penalty:
+				<input type="text" name="time" id="time" value="{{ phrase_penalty }}">
+				<input type="submit" value="Set Penalty">
+			</form>
+		</div>
 	</div>
 {% endblock %}
