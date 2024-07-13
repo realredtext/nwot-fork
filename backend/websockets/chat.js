@@ -194,7 +194,7 @@ module.exports = async function(ws, data, send, vars, evars) {
 
 		if(phrasePenaltyTime > 0) {
 			blocked_ips[ws.sdata.ipAddress] = Date.now() + phrasePenaltyTime*1000;
-			return serverChatResponse("You have been muted for "+ ~~(phrasePenaltyTime/60) +" minutes due to using a banned phrase.");
+			return serverChatResponse("You have been muted for " + phrasePenaltyTime + " seconds due to using a banned phrase.");
 		};
 		
 		send(res);
